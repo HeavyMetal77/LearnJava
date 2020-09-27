@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">LearnJava</string>
+    <string name="result">Result:</string>
+    <string name="question">Question:</string>
+    <string name="answer_options">Варианты ответов:</string>
+    <string name="checkbox1">CheckBox1</string>
+    <string name="checkbox2">CheckBox2</string>
+    <string name="checkbox3">CheckBox3</string>
+    <string name="checkbox4">CheckBox4</string>
+    <string name="submit">Проверить</string>
+    <string name="arrow_back">Стрелка назад</string>
+    <string name="topic_label">\Topic: </string>
+    <string name="task_label">\Task: </string>
+    <string name="checkbox5">CheckBox5</string>
+    <string name="right_answer">Правильный ответ</string>
+</resources>

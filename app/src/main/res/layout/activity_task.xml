@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    tools:context=".TaskActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/textViewLabelTopic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/topic_label"
+            android:textColor="@color/colorLabelText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewLabelTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/task_label"
+            android:textColor="@color/colorLabelText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewLabelTopic" />
+
+        <TextView
+            android:id="@+id/textLabelResultTask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/result"
+            android:textColor="@color/colorLabelText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLabelTopic" />
+
+        <TextView
+            android:id="@+id/textViewLabelQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            android:padding="8dp"
+            android:text="@string/question"
+            android:textColor="@color/colorLabelText"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textLabelResultTask" />
+
+        <EditText
+            android:id="@+id/editTextTextMultiLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:enabled="false"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            android:textColor="@color/colorTextTask"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewLabelQuestion" />
+
+        <TextView
+            android:id="@+id/textViewAnswerOptionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/answer_options"
+            android:textColor="@color/colorLabelText"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editTextTextMultiLine" />
+
+        <CheckBox
+            android:id="@+id/checkBox1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox1"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewAnswerOptionLabel" />
+
+        <CheckBox
+            android:id="@+id/checkBox2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox2"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox1" />
+
+        <CheckBox
+            android:id="@+id/checkBox3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox3"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox2" />
+
+        <CheckBox
+            android:id="@+id/checkBox4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox4"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox3" />
+
+        <CheckBox
+            android:id="@+id/checkBox5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox5"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox4" />
+
+        <Button
+            android:id="@+id/button_check_answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/style_btn"
+            android:onClick="checkRightAnswer"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/submit"
+            app:layout_constraintEnd_toEndOf="@id/imageViewArrowForward"
+            app:layout_constraintStart_toStartOf="@id/imageViewArrowBack"
+            app:layout_constraintTop_toBottomOf="@id/checkBox5" />
+
+        <ImageView
+            android:id="@+id/imageViewArrowBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/arrow_back"
+            android:onClick="goPreviousTask"
+            app:layout_constraintEnd_toStartOf="@id/button_check_answer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:srcCompat="@drawable/back48" />
+
+        <ImageView
+            android:id="@+id/imageViewArrowForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/arrow_back"
+            android:onClick="goNextTask"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/button_check_answer"
+            app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:srcCompat="@drawable/arrow48" />
+
+        <Button
+            android:id="@+id/buttonShowRightAnswer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/style_btn"
+            android:onClick="showRightAnswer"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="@string/right_answer"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_check_answer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
+
+
+
+
+
