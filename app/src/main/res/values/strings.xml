@@ -13,4 +13,7 @@
     <string name="task_label">\Task: </string>
     <string name="checkbox5">CheckBox5</string>
     <string name="right_answer">Правильный ответ</string>
+    <string name="item_main">Главная</string>
+    <string name="item_topics">Темы</string>
+    <string name="item_statistics">Статистика</string>
 </resources>

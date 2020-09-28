@@ -8,13 +8,15 @@ public class Task {
     private String taskStr; //суть завдання
     private List<String> allAnswersList; //всі відповіді
     private List<Boolean> rightAnswers; //правильні відповіді
+    private boolean isResolved; //чи вирішена задача
 
-    public Task(int idTask, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers) {
+    public Task(int idTask, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
         this.idTask = idTask;
         this.question = question;
         this.taskStr = taskStr;
         this.allAnswersList = allAnswersList;
         this.rightAnswers = rightAnswers;
+        this.isResolved = isResolved;
     }
 
     public String getTaskStr() {
@@ -55,5 +57,13 @@ public class Task {
 
     public void setIdTask(int idTask) {
         this.idTask = idTask;
+    }
+
+    public boolean isResolved() {
+        return isResolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        isResolved = resolved;
     }
 }

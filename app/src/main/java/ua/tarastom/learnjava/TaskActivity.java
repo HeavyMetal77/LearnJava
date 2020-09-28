@@ -1,12 +1,16 @@
 package ua.tarastom.learnjava;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -28,10 +32,22 @@ public class TaskActivity extends AppCompatActivity {
     private Button buttonShowRightAnswer;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-
 
         textViewTopic = findViewById(R.id.textViewLabelTopic);
         textViewLabelTask = findViewById(R.id.textViewLabelTask);
@@ -80,21 +96,17 @@ public class TaskActivity extends AppCompatActivity {
                         "       4. byte b4 = 0b101;\n" +
                         "       5. byte b5 = 225",
                 listAllAnswer,
-                listRightAnswer);
+                listRightAnswer, false);
         taskList.add(task1);
         ArrayList<String> listAllAnswer2 = new ArrayList<>();
         listAllAnswer2.add("5");
         listAllAnswer2.add("4");
         listAllAnswer2.add("3");
-        listAllAnswer2.add("2");
-        listAllAnswer2.add("1");
 
         ArrayList<Boolean> listRightAnswer2 = new ArrayList<>();
         listRightAnswer2.add(false);
         listRightAnswer2.add(false);
         listRightAnswer2.add(true);
-        listRightAnswer2.add(true);
-        listRightAnswer2.add(false);
 
         Task task2 = new Task(2, "Какая строка не скомпилируется?",
                 "       1. int i1 = 10;\n" +
@@ -102,42 +114,62 @@ public class TaskActivity extends AppCompatActivity {
                         "       3. int i3 = _1000_000_000;\n" +
                         "       4. int i4 = 1_0_00_00_0_000;\n" +
                         "       5. int i5 = 10_000_000_000;",
-                listAllAnswer,
-                listRightAnswer2);
+                listAllAnswer2,
+                listRightAnswer2, false);
         taskList.add(task2);
     }
 
+    //генерація наступного завдання
     public void generateNextTask(int idTask) {
+        for (CheckBox checkBox : checkBoxList) {
+            checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
+        }
         textViewTopic.setText(getResources().getString(R.string.topic_label) + topic.getNameTopic() + ". " + topic.getNameSubTopic());
         textViewLabelTask.setText(getResources().getString(R.string.task_label) + " " + taskList.get(idTask).getIdTask());
         textLabelResultTask.setText(getResources().getText(R.string.result) + " 2/5");
         textViewQuestion.setText(taskList.get(idTask).getQuestion());
         editTextTextMultiLine.setText(taskList.get(idTask).getTaskStr());
-        for (int i = 0; i < checkBoxList.size(); i++) {
+        int answerListSize = taskList.get(idTask).getAllAnswersList().size();
+        for (int i = 0; i < answerListSize; i++) {
             checkBoxList.get(i).setText(taskList.get(idTask).getAllAnswersList().get(i));
             checkBoxList.get(i).setChecked(false);
             checkBoxList.get(i).setBackground(getResources().getDrawable(R.drawable.style_btn_blue, getTheme()));
         }
+        //встановлюю кількість видимих чекбоксів, в залежності від кількості відповідей
+        int unusedCheckBoxes = checkBoxList.size() - answerListSize;
+        for (int i = checkBoxList.size() - 1; i >= checkBoxList.size() - unusedCheckBoxes; i--) {
+            checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
+        }
+        //якщо завдання вже вирішувалось - показую правильні відповіді
+        if (taskList.get(idTask).isResolved()) {
+            showRightAnswer();
+        }
     }
 
+    //метод онклік для наступного завдання
     public void goNextTask(View view) {
         if (idTask < taskList.size() - 1) {
             idTask += 1;
             generateNextTask(idTask);
+            buttonShowRightAnswer.setVisibility(View.INVISIBLE);
         }
     }
 
+    //метод онклік для попереднього завдання
     public void goPreviousTask(View view) {
         if (idTask > 0) {
             idTask -= 1;
             generateNextTask(idTask);
+            buttonShowRightAnswer.setVisibility(View.INVISIBLE);
         }
     }
 
+    //метод онклік для перевірки правильності відповіді
     public void checkRightAnswer(View view) {
         isRightAnswers(idTask);
     }
 
+    //перевірка правильності відповіді
     private void isRightAnswers(int i) {
         List<Boolean> rightAnswers = taskList.get(i).getRightAnswers();
         boolean choiceRightAnswer = true;
@@ -149,32 +181,39 @@ public class TaskActivity extends AppCompatActivity {
         if (choiceRightAnswer) {
             showRightAnswer();
             Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
+            taskList.get(idTask).setResolved(true); //встановити флаг чи вирішена задача
         } else {
             Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
-            buttonShowRightAnswer.setVisibility(View.VISIBLE);
+            buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
         }
     }
 
+    //метод для перевірки правильності відповіді
     public void showRightAnswer() {
         for (int i = 0; i < taskList.get(idTask).getAllAnswersList().size(); i++) {
             Boolean aBoolean = taskList.get(idTask).getRightAnswers().get(i);
             if (aBoolean) {
                 checkBoxList.get(i).setBackground(getResources().getDrawable(R.drawable.style_checkbox_green, getTheme())); ///
-
+                checkBoxList.get(i).setChecked(true);
             } else {
                 if (checkBoxList.get(i).isChecked()) {
                     checkBoxList.get(i).setBackground(getResources().getDrawable(R.drawable.style_checkbox_red, getTheme())); ///
+                    checkBoxList.get(i).setChecked(false);
                 } else {
                     checkBoxList.get(i).setBackground(getResources().getDrawable(R.drawable.style_btn_blue, getTheme()));
+                    checkBoxList.get(i).setChecked(false);
                 }
             }
         }
+        taskList.get(idTask).setResolved(true); //встановити флаг чи вирішена задача
     }
 
+    //метод онклік для перевірки правильності відповіді
     public void showRightAnswer(View view) {
         showRightAnswer();
     }
 
+    //метод онклік для зміни фону вибраного чекбокса
     public void onClickCheckBox(View view) {
         CheckBox checkBox = (CheckBox) view;
         if (checkBox.isChecked()) {

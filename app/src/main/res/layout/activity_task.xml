@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
+    android:background="@color/colorWhite"
     tools:context=".TaskActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -86,6 +86,7 @@
             android:gravity="start|top"
             android:inputType="textMultiLine"
             android:textColor="@color/colorTextTask"
+            android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewLabelQuestion" />
@@ -184,8 +185,9 @@
             android:textSize="15sp"
             android:textStyle="bold"
             app:buttonTint="@color/colorLabelText"
+            app:layout_constraintTop_toBottomOf="@id/checkBox4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/checkBox4" />
+            />
 
         <Button
             android:id="@+id/button_check_answer"
@@ -197,9 +199,10 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:text="@string/submit"
-            app:layout_constraintEnd_toEndOf="@id/imageViewArrowForward"
+            app:layout_constraintTop_toBottomOf="@id/checkBox5"
             app:layout_constraintStart_toStartOf="@id/imageViewArrowBack"
-            app:layout_constraintTop_toBottomOf="@id/checkBox5" />
+            app:layout_constraintEnd_toEndOf="@id/imageViewArrowForward"
+            />
 
         <ImageView
             android:id="@+id/imageViewArrowBack"
@@ -209,9 +212,9 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/arrow_back"
             android:onClick="goPreviousTask"
-            app:layout_constraintEnd_toStartOf="@id/button_check_answer"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/button_check_answer"
             app:srcCompat="@drawable/back48" />
 
         <ImageView
@@ -222,9 +225,9 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/arrow_back"
             android:onClick="goNextTask"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/button_check_answer"
             app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:layout_constraintStart_toEndOf="@id/button_check_answer"
+            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/arrow48" />
 
         <Button
@@ -238,9 +241,10 @@
             android:paddingEnd="10dp"
             android:text="@string/right_answer"
             android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_check_answer"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_check_answer" />
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
