@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "278496578020",
+    "firebase_url": "https://learnjava-a1701.firebaseio.com",
+    "project_id": "learnjava-a1701",
+    "storage_bucket": "learnjava-a1701.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278496578020:android:51dcdd082f0b29b3a59ff1",
+        "android_client_info": {
+          "package_name": "ua.tarastom.learnjava"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "278496578020-pljg08t3s25nhfrd6mppahpds3stiu11.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ua.tarastom.learnjava",
+            "certificate_hash": "be68e96c3de4c71491b3b5460a273385300e4129"
+          }
+        },
+        {
+          "client_id": "278496578020-g48gs8m68oof2q5so4u9pvjlcjr63plq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRIH8nmccBiHJ56EeR3jnyDbMGUYLvpjg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278496578020-g48gs8m68oof2q5so4u9pvjlcjr63plq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

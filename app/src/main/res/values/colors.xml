@@ -11,4 +11,6 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlue">#C7E3FF</color>
     <color name="colorError">#FF4500</color>
+    <color name="colorFon">#edebe9</color>
+    <color name="colorText">#787878</color>
 </resources>
