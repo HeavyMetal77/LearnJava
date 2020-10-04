@@ -1,5 +1,6 @@
 package ua.tarastom.learnjava;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,12 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.tarastom.learnjava.data.Task;
-import ua.tarastom.learnjava.data.Topic;
 
 public class TaskActivity extends AppCompatActivity {
     private List<Task> taskList = new ArrayList<>();
-    ;
-    private Topic topic;
     private TextView textViewTopic;
     private TextView textViewLabelTask;
     private TextView textLabelResultTask;
@@ -48,7 +46,11 @@ public class TaskActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
+        if (item.getItemId() == R.id.itemMain) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -58,137 +60,15 @@ public class TaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task);
 
         db = FirebaseFirestore.getInstance();
-
-
-        topic = new Topic("Основы", "Переменные");
-//        ArrayList<String> listAllAnswer = new ArrayList<>();
-//        listAllAnswer.add("1");
-//        listAllAnswer.add("2");
-//        listAllAnswer.add("3");
-//        listAllAnswer.add("4");
-//        listAllAnswer.add("5");
-//
-//        ArrayList<Boolean> listRightAnswer = new ArrayList<>();
-//        listRightAnswer.add(false);
-//        listRightAnswer.add(true);
-//        listRightAnswer.add(false);
-//        listRightAnswer.add(false);
-//        listRightAnswer.add(true);
-//
-//        ArrayList<String> listAllAnswer2 = new ArrayList<>();
-//        listAllAnswer2.add("5");
-//        listAllAnswer2.add("4");
-//        listAllAnswer2.add("3");
-//
-//        ArrayList<Boolean> listRightAnswer2 = new ArrayList<>();
-//        listRightAnswer2.add(false);
-//        listRightAnswer2.add(false);
-//        listRightAnswer2.add(true);
-//        db.collection("taskList").add(new Task(1, "Какая строка не скомпилируется?",
-//                "       1. byte b1 = 125;\n" +
-//                        "       2. byte b2 = -228;\n" +
-//                        "       3. byte b3 = 0b0101;\n" +
-//                        "       4. byte b4 = 0b101;\n" +
-//                        "       5. byte b5 = 225",
-//                listAllAnswer,
-//                listRightAnswer, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//            @Override
-//            public void onSuccess(DocumentReference documentReference) {
-//                Toast.makeText(TaskActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(TaskActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        db.collection("taskList").add(new Task(2, "Какая строка не скомпилируется?",
-//                "       1. int i1 = 10;\n" +
-//                        "       2. int i2 = 1_000_000_000;\n" +
-//                        "       3. int i3 = _1000_000_000;\n" +
-//                        "       4. int i4 = 1_0_00_00_0_000;\n" +
-//                        "       5. int i5 = 10_000_000_000;",
-//                listAllAnswer2,
-//                listRightAnswer2, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//            @Override
-//            public void onSuccess(DocumentReference documentReference) {
-//                Toast.makeText(TaskActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(TaskActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
         db.collection("taskList").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (value != null) {
                     taskList = value.toObjects(Task.class);
+                    generateNextTask(idTask);
                 }
             }
         });
-
-
-
-
-
-
-
-
-
-//        Map<String, Object> user = new HashMap<>();
-//        user.put("second", "Ada");
-//        user.put("last", "Lovelace");
-//        user.put("born", 1815);
-//
-//        db.collection("users").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//            @Override
-//            public void onSuccess(DocumentReference documentReference) {
-//                Toast.makeText(TaskActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(TaskActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    Toast.makeText(TaskActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-//                    QuerySnapshot result = task.getResult();
-//                    if (result == null) {
-//                        return;
-//                    }
-//                    for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-//                        Map<String, Object> data = queryDocumentSnapshot.getData();
-//                        Log.i("test", data.get("last").toString());
-//                        Log.i("test", data.get("born").toString());
-//                    }
-//                } else {
-//                    Toast.makeText(TaskActivity.this, "Error! " + task.getException(), Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//        db.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                if (value != null) {
-//                    for (QueryDocumentSnapshot queryDocumentSnapshot : value) {
-//                        Map<String, Object> data = queryDocumentSnapshot.getData();
-//                        Log.i("test", data.get("last").toString());
-//                        Log.i("test", data.get("born").toString());
-//                    }
-//                } else {
-//                    Toast.makeText(TaskActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
 
         textViewTopic = findViewById(R.id.textViewLabelTopic);
         textViewLabelTask = findViewById(R.id.textViewLabelTask);
@@ -207,95 +87,6 @@ public class TaskActivity extends AppCompatActivity {
         checkBoxList.add(checkBox4);
         checkBoxList.add(checkBox5);
         buttonShowRightAnswer = findViewById(R.id.buttonShowRightAnswer);
-
-//        createTempData();
-
-
-//        Map<String, Object> task1Obj = new HashMap<>();
-//        task1Obj.put("id", 1);
-//        task1Obj.put("question", "Какая строка не скомпилируется?");
-//        task1Obj.put("taskStr", "       1. byte b1 = 125;\\n\" +\n" +
-//                "                        \"       2. byte b2 = -228;\\n\" +\n" +
-//                "                        \"       3. byte b3 = 0b0101;\\n\" +\n" +
-//                "                        \"       4. byte b4 = 0b101;\\n\" +\n" +
-//                "                        \"       5. byte b5 = 225");
-//        task1Obj.put("isResolved", false);
-
-//        Map<String, Object> task2Obj = new HashMap<>();
-//        task1Obj.put("id", 2);
-//        task1Obj.put("question", "Какая из строк не скомпилируется?");
-//        task1Obj.put("taskStr", "       1. int i1 = 10;\\n\" +\n" +
-//                "                        \"       2. int i2 = 1_000_000_000;\\n\" +\n" +
-//                "                        \"       3. int i3 = _1000_000_000;\\n\" +\n" +
-//                "                        \"       4. int i4 = 1_0_00_00_0_000;\\n\" +\n" +
-//                "                        \"       5. int i5 = 10_000_000_000;");
-//        task1Obj.put("isResolved", false);
-//        db.collection("taskList")
-//                .add(task1Obj)
-//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                    @Override
-//                    public void onSuccess(DocumentReference documentReference) {
-////                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-////                        Log.w(TAG, "Error adding document", e);
-//                    }
-//                });
-//        db.collection("taskList").add(task1Obj);
-//        db.collection("taskList").add(task2Obj);
-
-
-//        generateNextTask(idTask);
-    }
-
-    private void createTempData() {
-        topic = new Topic("Основы", "Переменные");
-
-        ArrayList<String> listAllAnswer = new ArrayList<>();
-        listAllAnswer.add("1");
-        listAllAnswer.add("2");
-        listAllAnswer.add("3");
-        listAllAnswer.add("4");
-        listAllAnswer.add("5");
-
-        ArrayList<Boolean> listRightAnswer = new ArrayList<>();
-        listRightAnswer.add(false);
-        listRightAnswer.add(true);
-        listRightAnswer.add(false);
-        listRightAnswer.add(false);
-        listRightAnswer.add(true);
-
-        Task task1 = new Task(1, "Какая строка не скомпилируется?",
-                "       1. byte b1 = 125;\n" +
-                        "       2. byte b2 = -228;\n" +
-                        "       3. byte b3 = 0b0101;\n" +
-                        "       4. byte b4 = 0b101;\n" +
-                        "       5. byte b5 = 225",
-                listAllAnswer,
-                listRightAnswer, false);
-        taskList.add(task1);
-        ArrayList<String> listAllAnswer2 = new ArrayList<>();
-        listAllAnswer2.add("5");
-        listAllAnswer2.add("4");
-        listAllAnswer2.add("3");
-
-        ArrayList<Boolean> listRightAnswer2 = new ArrayList<>();
-        listRightAnswer2.add(false);
-        listRightAnswer2.add(false);
-        listRightAnswer2.add(true);
-
-        Task task2 = new Task(2, "Какая строка не скомпилируется?",
-                "       1. int i1 = 10;\n" +
-                        "       2. int i2 = 1_000_000_000;\n" +
-                        "       3. int i3 = _1000_000_000;\n" +
-                        "       4. int i4 = 1_0_00_00_0_000;\n" +
-                        "       5. int i5 = 10_000_000_000;",
-                listAllAnswer2,
-                listRightAnswer2, false);
-        taskList.add(task2);
     }
 
     //генерація наступного завдання
@@ -303,8 +94,9 @@ public class TaskActivity extends AppCompatActivity {
         for (CheckBox checkBox : checkBoxList) {
             checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
         }
-        textViewTopic.setText(getResources().getString(R.string.topic_label) + topic.getNameTopic() + ". " + topic.getNameSubTopic());
-        textViewLabelTask.setText(getResources().getString(R.string.task_label) + " " + taskList.get(idTask).getIdTask());
+        Task task = taskList.get(idTask);
+        textViewTopic.setText(getResources().getString(R.string.topic_label) + task.getTopic());
+        textViewLabelTask.setText(getResources().getString(R.string.task_label) + " " + task.getIdTask());
         textLabelResultTask.setText(getResources().getText(R.string.result) + " 2/5");
 
         if (taskList != null && taskList.size() > 0) {
@@ -330,7 +122,6 @@ public class TaskActivity extends AppCompatActivity {
 
     //метод онклік для наступного завдання
     public void goNextTask(View view) {
-
         if (taskList != null && idTask < taskList.size() - 1) {
             idTask += 1;
             generateNextTask(idTask);
@@ -408,5 +199,13 @@ public class TaskActivity extends AppCompatActivity {
         } else {
             checkBox.setBackground(getResources().getDrawable(R.drawable.style_btn_blue, getTheme()));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

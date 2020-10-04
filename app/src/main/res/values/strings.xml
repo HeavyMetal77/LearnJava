@@ -30,4 +30,5 @@
     <string name="text_register_button">Зарегистрироваться</string>
     <string name="text_i_have_an_account">У меня уже есть аккаунт</string>
     <string name="registration">Регистрация</string>
+
 </resources>

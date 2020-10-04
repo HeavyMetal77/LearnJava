@@ -4,6 +4,10 @@ public class Topic {
     private String nameTopic;
     private String nameSubTopic;
 
+    //конструктор без параметрів обов'язковий
+    public Topic() {
+    }
+
     public Topic(String nameTopic, String nameSubTopic) {
         this.nameTopic = nameTopic;
         this.nameSubTopic = nameSubTopic;
@@ -23,5 +27,10 @@ public class Topic {
 
     public void setNameSubTopic(String nameSubTopic) {
         this.nameSubTopic = nameSubTopic;
+    }
+
+    @Override
+    public String toString() {
+        return nameTopic + " " + nameSubTopic;
     }
 }

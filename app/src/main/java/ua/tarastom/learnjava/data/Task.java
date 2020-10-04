@@ -4,18 +4,19 @@ import java.util.List;
 
 public class Task {
     private int idTask;
+    private Topic topic; //тема
     private String question; //запитання
     private String taskStr; //суть завдання
     private List<String> allAnswersList; //всі відповіді
     private List<Boolean> rightAnswers; //правильні відповіді
     private boolean isResolved; //чи вирішена задача
 
-
     public Task() {
     }
 
-    public Task(int idTask, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
+    public Task(int idTask, Topic topic, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
         this.idTask = idTask;
+        this.topic = topic;
         this.question = question;
         this.taskStr = taskStr;
         this.allAnswersList = allAnswersList;
@@ -69,5 +70,13 @@ public class Task {
 
     public void setResolved(boolean resolved) {
         isResolved = resolved;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 }
