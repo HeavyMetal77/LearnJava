@@ -1,6 +1,7 @@
 package ua.tarastom.learnjava.data;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class Task {
     public Task() {
     }
 
+    @Ignore
     public Task(int idTask, String topic, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
         this.idTask = idTask;
         this.topic = topic;

@@ -45,7 +45,7 @@ public class ListTopicActivity extends AppCompatActivity {
         topicAdapter.setOnTopicClickListener(new TopicAdapter.OnTopicClickListener() {
             @Override
             public void onTopicClick(int position) {
-                Intent intent = null;
+                Intent intent;
                 if (mode == 2) {
                     intent = new Intent(ListTopicActivity.this, TestActivity.class);
                 }else {

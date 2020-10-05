@@ -46,11 +46,22 @@ public class TaskActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itemMain) {
             Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.itemTopics) {
+            Intent intent = new Intent(this, ListTopicActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.itemStatistics) {
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.itemExitAccount) {
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
@@ -121,13 +132,14 @@ public class TaskActivity extends AppCompatActivity {
         textLabelResultTask.setText(getResources().getText(R.string.result) + " 2/5");
 
         if (taskList != null && taskList.size() > 0) {
-            textViewQuestion.setText(taskList.get(idTask).getQuestion());
-            editTextTextMultiLine.setText(taskList.get(idTask).getTaskStr());
-            int answerListSize = taskList.get(idTask).getAllAnswersList().size();
+            textViewQuestion.setText(task.getQuestion());
+            editTextTextMultiLine.setText(task.getTaskStr());
+            int answerListSize = task.getAllAnswersList().size();
             for (int i = 0; i < answerListSize; i++) {
-                checkBoxList.get(i).setText(taskList.get(idTask).getAllAnswersList().get(i));
-                checkBoxList.get(i).setChecked(false);
-                checkBoxList.get(i).setBackground(getResources().getDrawable(R.drawable.style_btn_blue, getTheme()));
+                CheckBox checkBox = checkBoxList.get(i);
+                checkBox.setText(task.getAllAnswersList().get(i));
+                checkBox.setChecked(false);
+                checkBox.setBackground(getResources().getDrawable(R.drawable.style_btn_blue, getTheme()));
             }
             //встановлюю кількість видимих чекбоксів, в залежності від кількості відповідей
             int unusedCheckBoxes = checkBoxList.size() - answerListSize;
@@ -135,7 +147,7 @@ public class TaskActivity extends AppCompatActivity {
                 checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
             }
             //якщо завдання вже вирішувалось - показую правильні відповіді
-            if (taskList.get(idTask).isResolved()) {
+            if (task.isResolved()) {
                 showRightAnswer();
             }
         }

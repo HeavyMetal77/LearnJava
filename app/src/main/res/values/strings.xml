@@ -33,5 +33,6 @@
     <string name="label_button_training_mode">Режим обучения</string>
     <string name="label_button_test_mode">Режим тестирования</string>
     <string name="label_button_statistics">Статистика</string>
+    <string name="item_exit_account">Выход</string>
 
 </resources>
