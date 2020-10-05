@@ -1,6 +1,8 @@
 package ua.tarastom.learnjava;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +42,11 @@ public class TaskActivity extends AppCompatActivity {
     private Button buttonShowRightAnswer;
     private FirebaseFirestore db;
 
+    //SharedPreferences
+    public static final String APP_PREFERENCES = "learnjava";
+    public static final String APP_PREFERENCES_NUMBER_RESOLVED_TASK = "task";
+    public static SharedPreferences sharedPreferences;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -62,6 +69,7 @@ public class TaskActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.itemExitAccount) {
             Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra("exit", 0);
             startActivity(intent);
             finish();
         }
@@ -72,6 +80,10 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+
+        sharedPreferences =  getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        //отримуємо номер останнього вирішеного завдання з SharedPreferences
+        idTask = sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0);
 
         imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
         imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
@@ -147,8 +159,13 @@ public class TaskActivity extends AppCompatActivity {
                 checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
             }
             //якщо завдання вже вирішувалось - показую правильні відповіді
-            if (task.isResolved()) {
+            if (task.isResolved() || sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0) > idTask) {
                 showRightAnswer();
+            }
+
+            //якщо номер поточного завдання більший аніж у SharedPreferences інкременую їх
+            if (sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0) < idTask) {
+                sharedPreferences.edit().putInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, idTask).apply();
             }
         }
     }

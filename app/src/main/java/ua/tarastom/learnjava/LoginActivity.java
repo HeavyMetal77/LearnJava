@@ -55,24 +55,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signOut() {
-        AuthUI.getInstance().signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // Choose authentication providers
-                            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                                    new AuthUI.IdpConfig.GoogleBuilder().build());
+        //якщо інтент містить exit створюю нову аутентифікацію, якщо ні - переходимо до додатку
+        if (getIntent().hasExtra("exit")) {
+            AuthUI.getInstance().signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // Choose authentication providers
+                                List<AuthUI.IdpConfig> providers = Arrays.asList(
+                                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                                        new AuthUI.IdpConfig.GoogleBuilder().build());
 
-                            // Create and launch sign-in intent
-                            startActivityForResult(
-                                    AuthUI.getInstance()
-                                            .createSignInIntentBuilder()
-                                            .setAvailableProviders(providers)
-                                            .build(),
-                                    RC_SIGN_IN);
+                                // Create and launch sign-in intent
+                                startActivityForResult(
+                                        AuthUI.getInstance()
+                                                .createSignInIntentBuilder()
+                                                .setAvailableProviders(providers)
+                                                .build(),
+                                        RC_SIGN_IN);
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
     }
 }
