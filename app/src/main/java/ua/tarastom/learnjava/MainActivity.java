@@ -8,25 +8,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import ua.tarastom.learnjava.data.Task;
 import ua.tarastom.learnjava.data.Topic;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 100;
     private FirebaseFirestore db;
 
     @Override
@@ -35,52 +28,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         db = FirebaseFirestore.getInstance();
 
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
-
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
 //        uploadDataToFirestore();
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    Toast.makeText(this, "Successful! " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-                }
-                // ...
-            } else {
-                if (response != null) {
-                    Toast.makeText(this, "Error! " + response.getError(), Toast.LENGTH_SHORT).show();
-                }
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
-            }
-        }
+    public void onClickGoTrainingMode(View view) {
+        Intent intent = new Intent(this, ListTopicActivity.class);
+        intent.putExtra("mode", 1);
+        startActivity(intent);
     }
 
-    public void onClickGoDecideTask(View view) {
-        Intent intent = new Intent(this, TaskActivity.class);
+    public void onClickGoTestMode(View view) {
+        Intent intent = new Intent(this, ListTopicActivity.class);
+        intent.putExtra("mode", 2);
         startActivity(intent);
-        finish();
+    }
+
+    public void onClickGoStatistics(View view) {
+        Intent intent = new Intent(this, StatisticsActivity.class);
+        startActivity(intent);
     }
 
     public void uploadDataToFirestore() {
@@ -108,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         listRightAnswer2.add(false);
         listRightAnswer2.add(true);
 
-        Topic topic = new Topic("Типы данных, переменные и массивы.", "Объявление и инициализация переменных.");
+        Topic topic = new Topic("Типы данных, переменные и массивы.", 2);
         db.collection("taskList").add(new Task(1, topic, "Какая строка не скомпилируется?",
                 "       1. byte b1 = 125;\n" +
                         "       2. byte b2 = -228;\n" +
@@ -146,5 +111,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

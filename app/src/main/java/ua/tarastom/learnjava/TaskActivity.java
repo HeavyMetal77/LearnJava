@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +34,8 @@ public class TaskActivity extends AppCompatActivity {
     private TextView textViewQuestion;
     private TextView editTextTextMultiLine;
     private List<CheckBox> checkBoxList;
+    private ImageView imageViewArrowBack;
+    private ImageView imageViewArrowForward;
     private int idTask = 0; //номер завдання
     private Button buttonShowRightAnswer;
     private FirebaseFirestore db;
@@ -58,6 +61,10 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+
+        imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
+        imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
+        imageViewArrowBack.setVisibility(View.INVISIBLE);
 
         db = FirebaseFirestore.getInstance();
         db.collection("taskList").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -91,6 +98,20 @@ public class TaskActivity extends AppCompatActivity {
 
     //генерація наступного завдання
     public void generateNextTask(int idTask) {
+        //стрілка назад невидима, якщо перше завдання
+        if (idTask < 1) {
+            imageViewArrowBack.setVisibility(View.INVISIBLE);
+        } else {
+            imageViewArrowBack.setVisibility(View.VISIBLE);
+        }
+
+        //стрілка вперед невидима, якщо останнє завдання
+        if (idTask == taskList.size()-1) {
+            imageViewArrowForward.setVisibility(View.INVISIBLE);
+        } else {
+            imageViewArrowForward.setVisibility(View.VISIBLE);
+        }
+
         for (CheckBox checkBox : checkBoxList) {
             checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
         }
@@ -122,6 +143,13 @@ public class TaskActivity extends AppCompatActivity {
 
     //метод онклік для наступного завдання
     public void goNextTask(View view) {
+        //заборонено перехід до наступного завдання поки не виконано поточне
+        boolean resolved = taskList.get(idTask).isResolved();
+        if (!resolved) {
+            Toast.makeText(this, "Спочатку вирішіть це завдання!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //переходимо до наступного завдання
         if (taskList != null && idTask < taskList.size() - 1) {
             idTask += 1;
             generateNextTask(idTask);
@@ -144,9 +172,10 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     //перевірка правильності відповіді
-    private void isRightAnswers(int i) {
+    private void isRightAnswers(int idTask) {
         if (taskList != null && taskList.size() > 0) {
-            List<Boolean> rightAnswers = taskList.get(i).getRightAnswers();
+            Task task = taskList.get(idTask);
+            List<Boolean> rightAnswers = task.getRightAnswers();
             boolean choiceRightAnswer = true;
             for (int j = 0; j < rightAnswers.size(); j++) {
                 if (checkBoxList.get(j).isChecked() != rightAnswers.get(j)) {
@@ -156,7 +185,7 @@ public class TaskActivity extends AppCompatActivity {
             if (choiceRightAnswer) {
                 showRightAnswer();
                 Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
-                taskList.get(idTask).setResolved(true); //встановити флаг чи вирішена задача
+                task.setResolved(true); //встановити флаг чи вирішена задача
             } else {
                 Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
@@ -164,11 +193,12 @@ public class TaskActivity extends AppCompatActivity {
         }
     }
 
-    //метод для перевірки правильності відповіді
+    //метод для показу правильності відповіді
     public void showRightAnswer() {
         if (taskList != null && taskList.size() > 0) {
-            for (int i = 0; i < taskList.get(idTask).getAllAnswersList().size(); i++) {
-                Boolean aBoolean = taskList.get(idTask).getRightAnswers().get(i);
+            Task task = taskList.get(idTask);
+            for (int i = 0; i < task.getAllAnswersList().size(); i++) {
+                Boolean aBoolean = task.getRightAnswers().get(i);
                 if (aBoolean) {
                     checkBoxList.get(i).setBackground(getResources().getDrawable(R.drawable.style_checkbox_green, getTheme())); ///
                     checkBoxList.get(i).setChecked(true);
@@ -182,7 +212,7 @@ public class TaskActivity extends AppCompatActivity {
                     }
                 }
             }
-            taskList.get(idTask).setResolved(true); //встановити флаг чи вирішена задача
+            task.setResolved(true); //встановити флаг чи вирішена задача
         }
     }
 

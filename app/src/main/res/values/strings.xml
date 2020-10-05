@@ -9,7 +9,7 @@
     <string name="checkbox4">CheckBox4</string>
     <string name="submit">Проверить</string>
     <string name="arrow_back">Стрелка назад</string>
-    <string name="topic_label">\Topic: </string>
+    <string name="topic_label">\Тема: </string>
     <string name="task_label">\Task: </string>
     <string name="checkbox5">CheckBox5</string>
     <string name="right_answer">Правильный ответ</string>
@@ -30,5 +30,8 @@
     <string name="text_register_button">Зарегистрироваться</string>
     <string name="text_i_have_an_account">У меня уже есть аккаунт</string>
     <string name="registration">Регистрация</string>
+    <string name="label_button_training_mode">Режим обучения</string>
+    <string name="label_button_test_mode">Режим тестирования</string>
+    <string name="label_button_statistics">Статистика</string>
 
 </resources>
