@@ -8,9 +8,8 @@ public class Topic {
     public Topic() {
     }
 
-    public Topic(String nameTopic, int quantityTasksInTopic) {
+    public Topic(String nameTopic) {
         this.nameTopic = nameTopic;
-        this.quantityTasksInTopic = quantityTasksInTopic;
     }
 
     public String getNameTopic() {
@@ -27,10 +26,5 @@ public class Topic {
 
     public void setQuantityTasksInTopic(int quantityTasksInTopic) {
         this.quantityTasksInTopic = quantityTasksInTopic;
-    }
-
-    @Override
-    public String toString() {
-        return nameTopic;
     }
 }

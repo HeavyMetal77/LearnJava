@@ -16,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
 import ua.tarastom.learnjava.data.Task;
-import ua.tarastom.learnjava.data.Topic;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
         listRightAnswer2.add(false);
         listRightAnswer2.add(true);
 
-        Topic topic = new Topic("Типы данных, переменные и массивы.", 2);
-        db.collection("taskList").add(new Task(1, topic, "Какая строка не скомпилируется?",
+        db.collection("taskList").add(new Task(1, "Типы данных, переменные и массивы.", "Какая строка не скомпилируется?",
                 "       1. byte b1 = 125;\n" +
                         "       2. byte b2 = -228;\n" +
                         "       3. byte b3 = 0b0101;\n" +
@@ -92,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
             }
         });
-        db.collection("taskList").add(new Task(2, topic, "Какая строка не скомпилируется?",
+        db.collection("taskList").add(new Task(2, "Типы данных, переменные и массивы.", "Какая строка не скомпилируется?",
                 "       1. int i1 = 10;\n" +
                         "       2. int i2 = 1_000_000_000;\n" +
                         "       3. int i3 = _1000_000_000;\n" +

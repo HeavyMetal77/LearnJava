@@ -27,22 +27,20 @@ public class ListTopicActivity extends AppCompatActivity {
         //ListTopicActivity використовується в навчальному та тренувальному режимах
         //визначаємо в який режим здійснено вхід
         Intent intent = getIntent();
-
         if (intent.hasExtra("mode")) {
             mode = intent.getIntExtra("mode", 0);
         }
 
         //тимчасовий хардкод
-        topicList.add(new Topic("Типы данных, переменные и массивы", 2));
-        topicList.add(new Topic("Арифметические и логические операции", 5));
-        topicList.add(new Topic("Циклы", 8));
+        topicList.add(new Topic("Типы данных, переменные и массивы"));
+        topicList.add(new Topic("Арифметические и логические операции"));
+        topicList.add(new Topic("Циклы"));
 
         recyclerViewTest = findViewById(R.id.recyclerViewTest);
         topicAdapter = new TopicAdapter();
         recyclerViewTest.setLayoutManager(new LinearLayoutManager(this));
         topicAdapter.setTopicList(topicList);
         recyclerViewTest.setAdapter(topicAdapter);
-
 
         topicAdapter.setOnTopicClickListener(new TopicAdapter.OnTopicClickListener() {
             @Override

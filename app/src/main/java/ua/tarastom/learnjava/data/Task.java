@@ -1,10 +1,15 @@
 package ua.tarastom.learnjava.data;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.List;
 
+@Entity(tableName = "tasks")
 public class Task {
+    @PrimaryKey
     private int idTask;
-    private Topic topic; //тема
+    private String topic; //тема
     private String question; //запитання
     private String taskStr; //суть завдання
     private List<String> allAnswersList; //всі відповіді
@@ -14,7 +19,7 @@ public class Task {
     public Task() {
     }
 
-    public Task(int idTask, Topic topic, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
+    public Task(int idTask, String topic, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
         this.idTask = idTask;
         this.topic = topic;
         this.question = question;
@@ -72,11 +77,11 @@ public class Task {
         isResolved = resolved;
     }
 
-    public Topic getTopic() {
+    public String getTopic() {
         return topic;
     }
 
-    public void setTopic(Topic topic) {
+    public void setTopic(String topic) {
         this.topic = topic;
     }
 }
