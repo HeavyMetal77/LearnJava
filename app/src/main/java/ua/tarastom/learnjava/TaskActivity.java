@@ -76,6 +76,10 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+        Intent intent = getIntent();
+
+        int position = intent.getIntExtra("position", -1);
+        String nameTopic = intent.getStringExtra("nameTopic");
 
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         //отримуємо номер останнього вирішеного завдання з SharedPreferences
@@ -86,12 +90,22 @@ public class TaskActivity extends AppCompatActivity {
         imageViewArrowBack.setVisibility(View.INVISIBLE);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("taskList").addSnapshotListener((value, error) -> {
-            if (value != null) {
-                taskList = value.toObjects(Task.class);
-                generateNextTask(idTask);
-            }
-        });
+//        db.collection("taskList").addSnapshotListener((value, error) -> {
+//            if (value != null) {
+//                taskList = value.toObjects(Task.class);
+//                generateNextTask(idTask);
+//            }
+//        });
+
+        db.collection("taskList")
+                .whereEqualTo("topic", nameTopic)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    taskList = queryDocumentSnapshots.toObjects(Task.class);
+                    generateNextTask(idTask);
+                }).addOnFailureListener(e -> {
+                    startActivity(new Intent(getApplicationContext(), ListTopicActivity.class));
+                });
 
         textViewTopic = findViewById(R.id.textViewLabelTopic);
         textViewLabelTask = findViewById(R.id.textViewLabelTask);
@@ -256,7 +270,7 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ListTopicActivity.class);
         startActivity(intent);
         finish();
     }

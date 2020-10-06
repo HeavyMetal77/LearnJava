@@ -1,12 +1,10 @@
 package ua.tarastom.learnjava.data;
 
-import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(tableName = "tasks")
+//@Entity(tableName = "tasks")
 public class Task {
     @PrimaryKey
     private int idTask;
@@ -20,7 +18,7 @@ public class Task {
     public Task() {
     }
 
-    @Ignore
+//    @Ignore
     public Task(int idTask, String topic, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
         this.idTask = idTask;
         this.topic = topic;

@@ -44,7 +44,6 @@ public class ListTopicActivity extends AppCompatActivity {
         getDataFromCloudDB("topicList");
     }
 
-
     private void loadRecyclerView() {
         RecyclerView recyclerViewTest = findViewById(R.id.recyclerViewTest);
         topicAdapter = new TopicAdapter();
@@ -60,7 +59,8 @@ public class ListTopicActivity extends AppCompatActivity {
                 intent = new Intent(ListTopicActivity.this, TaskActivity.class);
             }
             Topic topic = topicAdapter.getTopicList().get(position);
-            intent.putExtra("position", topic.getNameTopic());
+            intent.putExtra("position", topic.getId());
+            intent.putExtra("nameTopic", topic.getNameTopic());
             startActivity(intent);
         });
     }
@@ -97,5 +97,13 @@ public class ListTopicActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

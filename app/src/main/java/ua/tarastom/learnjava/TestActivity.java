@@ -17,4 +17,12 @@ public class TestActivity extends AppCompatActivity {
             Toast.makeText(this, intent.getStringExtra("position"), Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, ListTopicActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
