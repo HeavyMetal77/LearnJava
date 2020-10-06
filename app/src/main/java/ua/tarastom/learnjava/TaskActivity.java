@@ -15,13 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +36,6 @@ public class TaskActivity extends AppCompatActivity {
     private ImageView imageViewArrowForward;
     private int idTask = 0; //номер завдання
     private Button buttonShowRightAnswer;
-    private FirebaseFirestore db;
 
     //SharedPreferences
     public static final String APP_PREFERENCES = "learnjava";
@@ -53,6 +48,7 @@ public class TaskActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.itemMain) {
@@ -81,7 +77,7 @@ public class TaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        sharedPreferences =  getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         //отримуємо номер останнього вирішеного завдання з SharedPreferences
         idTask = sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0);
 
@@ -89,14 +85,11 @@ public class TaskActivity extends AppCompatActivity {
         imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
         imageViewArrowBack.setVisibility(View.INVISIBLE);
 
-        db = FirebaseFirestore.getInstance();
-        db.collection("taskList").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null) {
-                    taskList = value.toObjects(Task.class);
-                    generateNextTask(idTask);
-                }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("taskList").addSnapshotListener((value, error) -> {
+            if (value != null) {
+                taskList = value.toObjects(Task.class);
+                generateNextTask(idTask);
             }
         });
 
@@ -129,7 +122,7 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         //стрілка вперед невидима, якщо останнє завдання
-        if (idTask == taskList.size()-1) {
+        if (idTask == taskList.size() - 1) {
             imageViewArrowForward.setVisibility(View.INVISIBLE);
         } else {
             imageViewArrowForward.setVisibility(View.VISIBLE);

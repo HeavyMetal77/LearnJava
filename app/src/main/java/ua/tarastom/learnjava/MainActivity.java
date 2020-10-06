@@ -14,22 +14,26 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Random;
 
 import ua.tarastom.learnjava.data.Task;
+import ua.tarastom.learnjava.data.Topic;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseFirestore db;
+    public FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         db = FirebaseFirestore.getInstance();
 
-//        uploadDataToFirestore();
+//        uploadDataToFirestore(); //тест завантаження даних в Cloud Firestore
+//        uploadListQuantityTasksToFirestore(); //тест завантаження даних в Cloud Firestore
     }
 
     public void onClickGoTrainingMode(View view) {
@@ -110,5 +114,69 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void uploadListQuantityTasksToFirestore() {
+        List<Topic> topicList = new ArrayList<>();
+        topicList.add(new Topic("Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль"));
+        topicList.add(new Topic("Арифметические и логические операции, операции сравнения и присваивания."));
+        topicList.add(new Topic("Классы и объекты, ссылочные типы данных"));
+        topicList.add(new Topic("Создание объектов, конструкторы. Объявление и вызов методов."));
+        topicList.add(new Topic("Перезагрузка методов и конструкторов."));
+        topicList.add(new Topic("Модификаторы видимости"));
+        topicList.add(new Topic("Модификаторы «final» и «static»"));
+        topicList.add(new Topic("Разновидности переменных и пределы их видимости. «import» и «import static»"));
+        topicList.add(new Topic("Примитивные и ссылочные типы данных при вызове метода"));
+        topicList.add(new Topic("Конструкции «if» и «if else». Ternary оператор. Конструкция «switch»"));
+        topicList.add(new Topic("Циклы «for», «foreach», «while» и «do while»"));
+        topicList.add(new Topic("Класс String"));
+        topicList.add(new Topic("Класс StringBuilder"));
+        topicList.add(new Topic("Работа с массивами"));
+        topicList.add(new Topic("Параметры метода типа varargs."));
+        topicList.add(new Topic("Коллекции"));
+        topicList.add(new Topic("«Garbage collection»"));
+        topicList.add(new Topic("Инкапсуляция."));
+        topicList.add(new Topic("Overriding Hiding Final"));
+        topicList.add(new Topic("Абстрактные, дефолтные, статические методы."));
+        topicList.add(new Topic("Полиморфизм."));
+        topicList.add(new Topic("Методы «equals» и «toString». Wrapper классы."));
+        topicList.add(new Topic("Исключения и Ошибки."));
+        topicList.add(new Topic("Классы, отвечающие за работу с датами и временем."));
+        topicList.add(new Topic("Алгоритмы."));
+        topicList.add(new Topic("Интерфейсы Comparable и Comparator."));
+        topicList.add(new Topic("Generics."));
+        topicList.add(new Topic("Nested классы."));
+        topicList.add(new Topic("Lambda выражения."));
+        topicList.add(new Topic("Streams."));
+        topicList.add(new Topic("Многопоточность."));
+        topicList.add(new Topic("Работа с файлами IO и NIO."));
+        topicList.add(new Topic("Регулярные выражения."));
+        topicList.add(new Topic("Enum."));
+        topicList.add(new Topic("Класс Scanner."));
+        topicList.add(new Topic("Reflection."));
+
+        int i = 0;
+        //тест - рандом значення
+        for (Topic topic : topicList) {
+            topic.setId(++i);
+            topic.setQuantityTasksInTopic(new Random().nextInt(100));
+        }
+
+        LinkedHashMap<String, Integer> integerMap = new LinkedHashMap<>();
+        for (Topic topic : topicList) {
+            integerMap.put(topic.getNameTopic(), topic.getQuantityTasksInTopic());
+        }
+
+        for (int j = 0; j < topicList.size(); j++) {
+            db.collection("topicList").add(topicList.get(j))
+                    .addOnSuccessListener(documentReference ->
+                            Toast.makeText(MainActivity.this, "Коллекция успешно добавлена в Cloud Firestore!",
+                                    Toast.LENGTH_SHORT).show()).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MainActivity.this, "Ошибка! Коллекция не добавлена в Cloud Firestore!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
