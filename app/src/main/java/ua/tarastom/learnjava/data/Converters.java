@@ -3,7 +3,6 @@ package ua.tarastom.learnjava.data;
 import androidx.room.TypeConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Converters {
@@ -26,7 +25,7 @@ public class Converters {
     @TypeConverter
     public List<Integer> fromStringToArrayListInt(String data) {
         if (data != null && data.length() > 0) {
-            List<String> stringList = Arrays.asList(data.split(","));
+            String[] stringList = data.split(",");
             List<Integer> integerList = new ArrayList<>();
             for (String string : stringList) {
                 integerList.add(Integer.parseInt(string));

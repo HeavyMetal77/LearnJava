@@ -14,6 +14,6 @@
     <color name="colorFon">#edebe9</color>
     <color name="colorText">#787878</color>
     <color name="colorTextCorrectly">#00CC00</color>
-    <color name="colorBackgroundCorrectly">#99FF99</color>
-    <color name="colorBackgroundIncorrectly">#FFCCCC</color>
+    <color name="colorBackgroundCorrectly">#EAFFEA</color>
+    <color name="colorBackgroundIncorrectly">#FFF0F0</color>
 </resources>

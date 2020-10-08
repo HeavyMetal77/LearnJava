@@ -82,7 +82,6 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         Intent intent = getIntent();
-
         int position = intent.getIntExtra("position", -1);
         String nameTopic = intent.getStringExtra("nameTopic");
 
@@ -94,19 +93,11 @@ public class TaskActivity extends AppCompatActivity {
             idTask = quantitySolvedTasks;
         }
 
-
         imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
         imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
         imageViewArrowBack.setVisibility(View.INVISIBLE);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        db.collection("taskList").addSnapshotListener((value, error) -> {
-//            if (value != null) {
-//                taskList = value.toObjects(Task.class);
-//                generateNextTask(idTask);
-//            }
-//        });
-
         db.collection("taskList")
                 .whereEqualTo("topic", nameTopic)
                 .get()
@@ -139,11 +130,13 @@ public class TaskActivity extends AppCompatActivity {
         checkBoxList.add(checkBox5);
         buttonShowRightAnswer = findViewById(R.id.buttonShowRightAnswer);
         scrollViewTaskActivity = findViewById(R.id.scrollViewTaskActivity);
-
     }
 
     //генерація наступного завдання
     public void generateNextTask(int idTask) {
+        //загальний фон встановлюю на білий
+        scrollViewTaskActivity.setBackground(getDrawable(R.color.colorWhite));
+
         //стрілка назад невидима, якщо перше завдання
         if (idTask < 1) {
             imageViewArrowBack.setVisibility(View.INVISIBLE);
@@ -162,6 +155,25 @@ public class TaskActivity extends AppCompatActivity {
             checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
         }
         Task task = taskList.get(idTask);
+
+
+        List<Integer> listOfIncorrectlySolvedProblems = currentStatisticTask.getListOfIncorrectlySolvedProblems();
+        if (listOfIncorrectlySolvedProblems != null
+                && listOfIncorrectlySolvedProblems.size() != 0
+                && listOfIncorrectlySolvedProblems.size() > idTask
+                && listOfIncorrectlySolvedProblems.get(idTask) == 0) {
+            //загальний фон змінюється на світло-червоний
+            scrollViewTaskActivity.setBackground(getDrawable(R.color.colorBackgroundIncorrectly));
+        }
+        if (listOfIncorrectlySolvedProblems != null
+                && listOfIncorrectlySolvedProblems.size() != 0
+                && listOfIncorrectlySolvedProblems.size() > idTask
+                && listOfIncorrectlySolvedProblems.get(idTask) == 1) {
+            //загальний фон змінюється на світло-зелений
+            scrollViewTaskActivity.setBackground(getDrawable(R.color.colorBackgroundCorrectly));
+        }
+
+
         //встановлюю написи
         textViewTopic.setText(getResources().getString(R.string.topic_label) + " " + task.getTopic());
         textViewLabelTask.setText(getResources().getString(R.string.task_label) + " " + (idTask + 1));
@@ -241,6 +253,9 @@ public class TaskActivity extends AppCompatActivity {
                 showRightAnswer();
                 Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
                 task.setResolved(true); //встановити флаг чи вирішена задача
+                buttonShowRightAnswer.setVisibility(View.INVISIBLE); //сховати кнопку правильної відповіді
+                //загальний фон змінюється на світло-зелений
+                scrollViewTaskActivity.setBackground(getDrawable(R.color.colorBackgroundCorrectly));
 
                 currentStatisticTask.getListOfIncorrectlySolvedProblems().add(1);//встановити флаг - вирішена задача
                 int numberOfCorrectlySolvedTasks = currentStatisticTask.getNumberOfCorrectlySolvedTasks(); //кількість правильно вирішених завдань інкременую
@@ -250,6 +265,8 @@ public class TaskActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
+                //загальний фон змінюється на світло-червоний
+                scrollViewTaskActivity.setBackground(getDrawable(R.color.colorBackgroundIncorrectly));
 
                 currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks() + 1); //збільшую кількість вирішених задач (правильних+неправильних)
                 currentStatisticTask.getListOfIncorrectlySolvedProblems().add(0);//встановити флаг - не вирішена задача
