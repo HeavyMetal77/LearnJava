@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ua.tarastom.learnjava.data.MainViewModel;
 import ua.tarastom.learnjava.data.Statistic;
 import ua.tarastom.learnjava.data.Topic;
 import ua.tarastom.learnjava.data.TopicAdapter;
@@ -26,12 +28,17 @@ public class ListTopicActivity extends AppCompatActivity {
     private TopicAdapter topicAdapter;
     private List<Topic> topicList = new ArrayList<>();
     private int mode;
-    private List<Statistic> statisticsList = new ArrayList<>();
+    private MainViewModel mainViewModel;
+    private List<Statistic> statisticList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_topic);
+
+        if (mainViewModel == null) {
+            mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
+        }
 
         //ListTopicActivity використовується в навчальному та тренувальному режимах
         //визначаємо в який режим здійснено вхід
@@ -50,6 +57,7 @@ public class ListTopicActivity extends AppCompatActivity {
         recyclerViewTest.setLayoutManager(new LinearLayoutManager(this));
         Collections.sort(topicList, (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
         topicAdapter.setTopicList(topicList);
+        topicAdapter.setStatisticList(statisticList);
         recyclerViewTest.setAdapter(topicAdapter);
         topicAdapter.setOnTopicClickListener(position -> {
             Intent intent;
@@ -63,6 +71,20 @@ public class ListTopicActivity extends AppCompatActivity {
             intent.putExtra("nameTopic", topic.getNameTopic());
             startActivity(intent);
         });
+    }
+
+    //створюю нову або дістаю з БД SQLite дані статистики
+    private void setStatisticsList() {
+        statisticList = mainViewModel.getAllStatistics();
+        if (statisticList == null || statisticList.size()==0) {
+            statisticList = new ArrayList<>();
+            for (int i = 0; i < topicList.size(); i++) {
+                Topic topic = topicList.get(i);
+                Statistic statistic = new Statistic(topic.getId(), topic.getNameTopic(), topic.getQuantityTasksInTopic());
+                statisticList.add(statistic);
+                mainViewModel.insertStatistic(statistic);
+            }
+        }
     }
 
     //getTopics
@@ -93,6 +115,7 @@ public class ListTopicActivity extends AppCompatActivity {
                     if (value != null) {
                         topicList = value.toObjects(Topic.class);
                     }
+                    setStatisticsList(); //створюю нову або дістаю з БД SQLite дані статистики
                     loadRecyclerView(); //встановлюю елементи інтерфейсу
                 }
             });
@@ -101,7 +124,6 @@ public class ListTopicActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

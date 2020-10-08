@@ -1,8 +1,6 @@
 package ua.tarastom.learnjava;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,17 +9,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ua.tarastom.learnjava.data.MainViewModel;
+import ua.tarastom.learnjava.data.Statistic;
 import ua.tarastom.learnjava.data.Task;
 
 public class TaskActivity extends AppCompatActivity {
@@ -36,11 +38,9 @@ public class TaskActivity extends AppCompatActivity {
     private ImageView imageViewArrowForward;
     private int idTask = 0; //номер завдання
     private Button buttonShowRightAnswer;
-
-    //SharedPreferences
-    public static final String APP_PREFERENCES = "learnjava";
-    public static final String APP_PREFERENCES_NUMBER_RESOLVED_TASK = "task";
-    public static SharedPreferences sharedPreferences;
+    private MainViewModel mainViewModel;
+    private Statistic currentStatisticTask;
+    private ScrollView scrollViewTaskActivity;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,14 +76,24 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+
+        if (mainViewModel == null) {
+            mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
+        }
+
         Intent intent = getIntent();
 
         int position = intent.getIntExtra("position", -1);
         String nameTopic = intent.getStringExtra("nameTopic");
 
-        sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        //отримуємо номер останнього вирішеного завдання з SharedPreferences
-        idTask = sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0);
+        //отримуємо номер останнього вирішеного завдання з SQLite Statistic
+        List<Statistic> allStatistics = mainViewModel.getAllStatistics();
+        currentStatisticTask = allStatistics.get(position - 1);
+        int quantitySolvedTasks = currentStatisticTask.getQuantitySolvedTasks();
+        if (quantitySolvedTasks > idTask) {
+            idTask = quantitySolvedTasks;
+        }
+
 
         imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
         imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
@@ -102,10 +112,14 @@ public class TaskActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList = queryDocumentSnapshots.toObjects(Task.class);
+                    //якщо завдань в темі більше не має встановлюю idTask на останнє
+                    if (idTask >= taskList.size()) {
+                        idTask = taskList.size() - 1;
+                    }
                     generateNextTask(idTask);
                 }).addOnFailureListener(e -> {
-                    startActivity(new Intent(getApplicationContext(), ListTopicActivity.class));
-                });
+            startActivity(new Intent(getApplicationContext(), ListTopicActivity.class));
+        });
 
         textViewTopic = findViewById(R.id.textViewLabelTopic);
         textViewLabelTask = findViewById(R.id.textViewLabelTask);
@@ -124,6 +138,8 @@ public class TaskActivity extends AppCompatActivity {
         checkBoxList.add(checkBox4);
         checkBoxList.add(checkBox5);
         buttonShowRightAnswer = findViewById(R.id.buttonShowRightAnswer);
+        scrollViewTaskActivity = findViewById(R.id.scrollViewTaskActivity);
+
     }
 
     //генерація наступного завдання
@@ -146,9 +162,11 @@ public class TaskActivity extends AppCompatActivity {
             checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
         }
         Task task = taskList.get(idTask);
-        textViewTopic.setText(getResources().getString(R.string.topic_label) + task.getTopic());
-        textViewLabelTask.setText(getResources().getString(R.string.task_label) + " " + task.getIdTask());
-        textLabelResultTask.setText(getResources().getText(R.string.result) + " 2/5");
+        //встановлюю написи
+        textViewTopic.setText(getResources().getString(R.string.topic_label) + " " + task.getTopic());
+        textViewLabelTask.setText(getResources().getString(R.string.task_label) + " " + (idTask + 1));
+        textLabelResultTask.setText(getResources().getText(R.string.result).toString() + " "
+                + currentStatisticTask.getNumberOfCorrectlySolvedTasks() + " / " + currentStatisticTask.getQuantityTasksInTopic());
 
         if (taskList != null && taskList.size() > 0) {
             textViewQuestion.setText(task.getQuestion());
@@ -166,13 +184,14 @@ public class TaskActivity extends AppCompatActivity {
                 checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
             }
             //якщо завдання вже вирішувалось - показую правильні відповіді
-            if (task.isResolved() || sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0) > idTask) {
+            if (task.isResolved() || currentStatisticTask.getQuantitySolvedTasks() > idTask) {
                 showRightAnswer();
             }
 
-            //якщо номер поточного завдання більший аніж у SharedPreferences інкременую їх
-            if (sharedPreferences.getInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, 0) < idTask) {
-                sharedPreferences.edit().putInt(APP_PREFERENCES_NUMBER_RESOLVED_TASK, idTask).apply();
+            //якщо номер поточного завдання більший аніж у SQLite Statistic інкременую їх
+            if (currentStatisticTask.getQuantitySolvedTasks() < idTask) {
+                currentStatisticTask.setQuantitySolvedTasks(idTask);
+                mainViewModel.insertStatistic(currentStatisticTask);
             }
         }
     }
@@ -222,9 +241,19 @@ public class TaskActivity extends AppCompatActivity {
                 showRightAnswer();
                 Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
                 task.setResolved(true); //встановити флаг чи вирішена задача
+
+                currentStatisticTask.getListOfIncorrectlySolvedProblems().add(1);//встановити флаг - вирішена задача
+                int numberOfCorrectlySolvedTasks = currentStatisticTask.getNumberOfCorrectlySolvedTasks(); //кількість правильно вирішених завдань інкременую
+                currentStatisticTask.setNumberOfCorrectlySolvedTasks(numberOfCorrectlySolvedTasks + 1);
+                currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks() + 1);  //збільшую кількість вирішених задач (правильних+неправильних)
+                mainViewModel.insertStatistic(currentStatisticTask);
             } else {
                 Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
+
+                currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks() + 1); //збільшую кількість вирішених задач (правильних+неправильних)
+                currentStatisticTask.getListOfIncorrectlySolvedProblems().add(0);//встановити флаг - не вирішена задача
+                mainViewModel.insertStatistic(currentStatisticTask);
             }
         }
     }
@@ -269,7 +298,6 @@ public class TaskActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent intent = new Intent(this, ListTopicActivity.class);
         startActivity(intent);
         finish();

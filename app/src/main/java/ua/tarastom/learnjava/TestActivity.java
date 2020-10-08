@@ -20,7 +20,6 @@ public class TestActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent intent = new Intent(this, ListTopicActivity.class);
         startActivity(intent);
         finish();

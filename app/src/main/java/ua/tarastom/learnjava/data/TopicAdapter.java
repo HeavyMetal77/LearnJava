@@ -17,9 +17,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
     private List<Topic> topicList;
     private OnTopicClickListener onTopicClickListener;
+    private List<Statistic> statisticList;
 
     public TopicAdapter() {
         topicList = new ArrayList<>();
+        statisticList = new ArrayList<>();
     }
 
     public List<Topic> getTopicList() {
@@ -29,6 +31,14 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public void setTopicList(List<Topic> topicList) {
         this.topicList = topicList;
         notifyDataSetChanged();
+    }
+
+    public List<Statistic> getStatisticList() {
+        return statisticList;
+    }
+
+    public void setStatisticList(List<Statistic> statisticList) {
+        this.statisticList = statisticList;
     }
 
     public void setOnTopicClickListener(OnTopicClickListener onTopicClickListener) {
@@ -49,8 +59,10 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     @Override
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = topicList.get(position);
+        Statistic statistic = statisticList.get(position);
         holder.textViewTopicCategory.setText(topic.getNameTopic());
         holder.textViewSolvedProblem.setText(String.valueOf(topic.getQuantityTasksInTopic()));
+        holder.textViewCorrectlySolvedProblem.setText(String.valueOf(statistic.getNumberOfCorrectlySolvedTasks()));
     }
 
     @Override
@@ -61,12 +73,13 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     class TopicViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewTopicCategory;
         private TextView textViewSolvedProblem;
-
+        private TextView textViewCorrectlySolvedProblem;
 
         public TopicViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTopicCategory = itemView.findViewById(R.id.textViewTopicCategory);
             textViewSolvedProblem = itemView.findViewById(R.id.textViewSolvedProblem);
+            textViewCorrectlySolvedProblem = itemView.findViewById(R.id.textViewCorrectlySolvedProblem);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

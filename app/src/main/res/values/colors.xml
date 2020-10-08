@@ -13,4 +13,7 @@
     <color name="colorError">#FF4500</color>
     <color name="colorFon">#edebe9</color>
     <color name="colorText">#787878</color>
+    <color name="colorTextCorrectly">#00CC00</color>
+    <color name="colorBackgroundCorrectly">#99FF99</color>
+    <color name="colorBackgroundIncorrectly">#FFCCCC</color>
 </resources>

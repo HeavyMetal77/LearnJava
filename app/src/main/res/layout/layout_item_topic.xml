@@ -38,8 +38,26 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textSize="18sp"
+        tools:text="test1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guidelineRight"
+        app:layout_constraintBottom_toTopOf="@+id/textViewCorrectlySolvedProblem"
+
+        />
+
+    <TextView
+        android:id="@+id/textViewCorrectlySolvedProblem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textSize="18sp"
+        android:textColor="@color/colorTextCorrectly"
+        tools:text="test2"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSolvedProblem"
+        app:layout_constraintStart_toEndOf="@+id/guidelineRight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

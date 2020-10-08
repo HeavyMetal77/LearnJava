@@ -1,18 +1,30 @@
 package ua.tarastom.learnjava.data;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Statistic {
+    @PrimaryKey
     private int id;
     private String nameTopic; //назва теми
     private int quantityTasksInTopic; //кількість всіх задач в темі
     private int quantitySolvedTasks; //кількість всіх вирішених задач (правильно і не правильно)
     private int numberOfCorrectlySolvedTasks; //кількість правильно вирішених задач
-    private List<Integer> listOfIncorrectlySolvedProblems; //список номерів неправильно вирішених задач
+    private List<Integer> listOfIncorrectlySolvedProblems; //список номерів неправильно вирішених задач - 0, правильно - 1
 
-    public Statistic(int id, String nameTopic) {
+    public Statistic() {
+    }
+
+    @Ignore
+    public Statistic(int id, String nameTopic, int quantityTasksInTopic) {
         this.id = id;
         this.nameTopic = nameTopic;
+        this.quantityTasksInTopic = quantityTasksInTopic;
     }
 
     public int getId() {
@@ -56,6 +68,9 @@ public class Statistic {
     }
 
     public List<Integer> getListOfIncorrectlySolvedProblems() {
+        if (listOfIncorrectlySolvedProblems == null) {
+            listOfIncorrectlySolvedProblems = new ArrayList<>();
+        }
         return listOfIncorrectlySolvedProblems;
     }
 

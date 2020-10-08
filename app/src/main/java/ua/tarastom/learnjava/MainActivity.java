@@ -22,8 +22,7 @@ import ua.tarastom.learnjava.data.Task;
 import ua.tarastom.learnjava.data.Topic;
 
 public class MainActivity extends AppCompatActivity {
-
-    public FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,20 +67,13 @@ public class MainActivity extends AppCompatActivity {
         listRightAnswer.add(false);
         listRightAnswer.add(true);
 
-        ArrayList<String> listAllAnswer2 = new ArrayList<>();
-        listAllAnswer2.add("5");
-        listAllAnswer2.add("4");
-        listAllAnswer2.add("3");
 
-        ArrayList<Boolean> listRightAnswer2 = new ArrayList<>();
-        listRightAnswer2.add(false);
-        listRightAnswer2.add(false);
-        listRightAnswer2.add(true);
-
-        db.collection("taskList").add(new Task(1, "Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль", "Какая строка не скомпилируется?",
-                "       1. byte b1 = 125;\n" +
-                        "       2. byte b2 = -228;\n" +
-                        "       3. byte b3 = 0b0101;\n" +
+        db.collection("taskList").add(new Task(1,
+                "Арифметические и логические операции, операции сравнения и присваивания.",
+                "Какая строка не скомпилируется?",
+                "       1. byte b11 = 125;\n" +
+                        "       2. byte b21 = -228;\n" +
+                        "       3. byte b31 = 0b0101;\n" +
                         "       4. byte b4 = 0b101;\n" +
                         "       5. byte b5 = 225",
                 listAllAnswer,
@@ -96,14 +88,60 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
             }
         });
-        db.collection("taskList").add(new Task(2, "Арифметические и логические операции, операции сравнения и присваивания.", "Какая строка не скомпилируется?",
-                "       1. int i1 = 10;\n" +
-                        "       2. int i2 = 1_000_000_000;\n" +
-                        "       3. int i3 = _1000_000_000;\n" +
+        ArrayList<String> listAllAnswer2 = new ArrayList<>();
+        listAllAnswer2.add("5");
+        listAllAnswer2.add("4");
+        listAllAnswer2.add("3");
+
+        ArrayList<Boolean> listRightAnswer2 = new ArrayList<>();
+        listRightAnswer2.add(false);
+        listRightAnswer2.add(false);
+        listRightAnswer2.add(true);
+        db.collection("taskList").add(new Task(3,
+                "Арифметические и логические операции, операции сравнения и присваивания.",
+                "Какая строка не скомпилируется?",
+                "       1. int i8 = 10;\n" +
+                        "       2. int i9 = 1_000_000_000;\n" +
+                        "       3. int i10 = _1000_000_000;\n" +
                         "       4. int i4 = 1_0_00_00_0_000;\n" +
                         "       5. int i5 = 10_000_000_000;",
                 listAllAnswer2,
                 listRightAnswer2, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        ArrayList<String> listAllAnswer3 = new ArrayList<>();
+        listAllAnswer3.add("1");
+        listAllAnswer3.add("2");
+        listAllAnswer3.add("3");
+        listAllAnswer3.add("4");
+        listAllAnswer3.add("5");
+
+        ArrayList<Boolean> listRightAnswer3 = new ArrayList<>();
+        listRightAnswer3.add(false);
+        listRightAnswer3.add(true);
+        listRightAnswer3.add(false);
+        listRightAnswer3.add(false);
+        listRightAnswer3.add(true);
+
+        db.collection("taskList").add(new Task(4,
+                "Арифметические и логические операции, операции сравнения и присваивания.",
+                "Какая строка не скомпилируется?",
+                "       1. byte b4 = 125;\n" +
+                        "       2. byte b5 = -228;\n" +
+                        "       3. byte b6 = 0b0101;\n" +
+                        "       4. byte b7 = 0b101;\n" +
+                        "       5. byte b8 = 225",
+                listAllAnswer3,
+                listRightAnswer3, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT).show();
@@ -182,6 +220,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        //эмулируем нажатие на HOME, сворачивая приложение
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }
