@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickGoTestMode(View view) {
-        Intent intent = new Intent(this, ListTopicActivity.class);
+        Intent intent = new Intent(this, TestActivity.class);
         intent.putExtra("mode", 2);
         startActivity(intent);
     }

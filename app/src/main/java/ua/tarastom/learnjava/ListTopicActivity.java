@@ -42,10 +42,10 @@ public class ListTopicActivity extends AppCompatActivity {
 
         //ListTopicActivity використовується в навчальному та тренувальному режимах
         //визначаємо в який режим здійснено вхід
-        Intent intent = getIntent();
-        if (intent.hasExtra("mode")) {
-            mode = intent.getIntExtra("mode", 0);
-        }
+//        Intent intent = getIntent();
+//        if (intent.hasExtra("mode")) {
+//            mode = intent.getIntExtra("mode", 0);
+//        }
         //отримую з БД Cloud Firestore інформацію про назви тем і кількість завдань в кожній темі
         //і завантажую в RecyclerView
         getDataFromCloudDB("topicList");
@@ -61,11 +61,11 @@ public class ListTopicActivity extends AppCompatActivity {
         recyclerViewTest.setAdapter(topicAdapter);
         topicAdapter.setOnTopicClickListener(position -> {
             Intent intent;
-            if (mode == 2) {
-                intent = new Intent(ListTopicActivity.this, TestActivity.class);
-            } else {
+//            if (mode == 2) {
+//            intent = new Intent(ListTopicActivity.this, TestActivity.class);
+//            } else {
                 intent = new Intent(ListTopicActivity.this, TaskActivity.class);
-            }
+//            }
             Topic topic = topicAdapter.getTopicList().get(position);
             intent.putExtra("position", topic.getId());
             intent.putExtra("nameTopic", topic.getNameTopic());
@@ -124,8 +124,10 @@ public class ListTopicActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
+        //эмулируем нажатие на HOME, сворачивая приложение
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        finish();
     }
 }
