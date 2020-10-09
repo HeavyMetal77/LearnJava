@@ -22,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import ua.tarastom.learnjava.data.MainViewModel;
 import ua.tarastom.learnjava.data.Statistic;
@@ -43,6 +45,7 @@ public class TaskActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private Statistic currentStatisticTask;
     private ScrollView scrollViewTaskActivity;
+    private int language = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,7 +104,7 @@ public class TaskActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("taskList")
-                .whereEqualTo("topic", nameTopic)
+                .whereEqualTo("idTopic", position)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList = queryDocumentSnapshots.toObjects(Task.class);
@@ -194,7 +197,7 @@ public class TaskActivity extends AppCompatActivity {
 
 
         //встановлюю написи
-        String topic = getResources().getString(R.string.topic_label) + " " + task.getTopic();
+        String topic = getResources().getString(R.string.topic_label) + " " + task.getTopic().get(language);
         textViewTopic.setText(topic);
         String labelTask = getResources().getString(R.string.task_label) + " " + (idTask + 1);
         textViewLabelTask.setText(labelTask);
@@ -204,15 +207,17 @@ public class TaskActivity extends AppCompatActivity {
         textLabelResultTask.setText(labelLabelResultTask);
 
         if (taskList != null && taskList.size() > 0) {
-            textViewQuestion.setText(task.getQuestion());
+            textViewQuestion.setText(task.getQuestion().get(language));
             editTextTextMultiLine.setText(task.getTaskStr());
-            int answerListSize = task.getAllAnswersList().size();
-            for (int i = 0; i < answerListSize; i++) {
-                CheckBox checkBox = checkBoxList.get(i);
-                checkBox.setText(task.getAllAnswersList().get(i));
+            int answerListSize = task.getAnswermap().size();
+            int countCheckbox = 0;
+            for (String key : task.getAnswermap().keySet()) {
+                CheckBox checkBox = checkBoxList.get(countCheckbox++);
+                checkBox.setText(key);
                 checkBox.setChecked(false);
                 checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_btn_blue));
             }
+
             //встановлюю кількість видимих чекбоксів, в залежності від кількості відповідей
             int unusedCheckBoxes = checkBoxList.size() - answerListSize;
             for (int i = checkBoxList.size() - 1; i >= checkBoxList.size() - unusedCheckBoxes; i--) {
@@ -265,18 +270,28 @@ public class TaskActivity extends AppCompatActivity {
     private void isRightAnswers(int idTask) {
         if (taskList != null && taskList.size() > 0) {
             Task task = taskList.get(idTask);
-            List<Boolean> rightAnswers = task.getRightAnswers();
-            boolean choiceRightAnswer = true;
-            for (int j = 0; j < rightAnswers.size(); j++) {
-                if (checkBoxList.get(j).isChecked() != rightAnswers.get(j)) {
-                    choiceRightAnswer = false;
+
+            //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
+            Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
+            boolean choiceRightAnswer = true; // флаг правильної відповіді
+            for (int j = 0; j < entries.size(); j++) {
+                String textCheckBox = checkBoxList.get(j).getText().toString().trim();
+                for (Map.Entry<String, Boolean> entry : entries) {
+                    if (entry.getKey().equals(textCheckBox)) {
+                        choiceRightAnswer = entry.getValue().equals(checkBoxList.get(j).isChecked());
+                        break;
+                    }
+                }
+                if (!choiceRightAnswer) {
+                    break;
                 }
             }
+
             if (choiceRightAnswer) {
                 showRightAnswer();
                 Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
                 //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
-                if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size()-1 < idTask) {
+                if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size() - 1 < idTask) {
                     task.setResolved(true); //встановити флаг чи вирішена задача
                     currentStatisticTask.getListOfIncorrectlySolvedProblems().add(1);//встановити флаг - вирішена задача
                     int numberOfCorrectlySolvedTasks = currentStatisticTask.getNumberOfCorrectlySolvedTasks(); //кількість правильно вирішених завдань інкременую
@@ -302,15 +317,8 @@ public class TaskActivity extends AppCompatActivity {
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
                 //загальний фон змінюється на світло-червоний
                 scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorBackgroundIncorrectly));
-
-                //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
-                if (!task.isResolved()) {
-                    int quantitySolvedTasks = currentStatisticTask.getQuantitySolvedTasks();
-                    currentStatisticTask.setQuantitySolvedTasks(quantitySolvedTasks + 1); //збільшую кількість вирішених задач (правильних+неправильних)}
-                    currentStatisticTask.getListOfIncorrectlySolvedProblems().add(0);//встановити флаг - не вирішена задача
-                }
-                    mainViewModel.insertStatistic(currentStatisticTask);
-                }
+                mainViewModel.insertStatistic(currentStatisticTask);
+            }
         }
     }
 
@@ -322,23 +330,38 @@ public class TaskActivity extends AppCompatActivity {
         }
         if (taskList.size() > 0) {
             Task task = taskList.get(idTask);
-            for (int i = 0; i < task.getAllAnswersList().size(); i++) {
-                Boolean aBoolean = task.getRightAnswers().get(i);
-                if (aBoolean) {
-                    checkBoxList.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_green));
-                    checkBoxList.get(i).setChecked(true);
-                } else {
-                    if (checkBoxList.get(i).isChecked()) {
-                        checkBoxList.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_red));
-                        checkBoxList.get(i).setChecked(false);
-                    } else {
-                        checkBoxList.get(i).setBackground(ContextCompat.getDrawable(this, R.drawable.style_btn_blue));
-                        checkBoxList.get(i).setChecked(false);
+            int size = task.getAnswermap().size();
+            for (int i = 0; i < size; i++) {
+                //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
+                Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
+                for (int j = 0; j < entries.size(); j++) {
+                    String textCheckBox = checkBoxList.get(j).getText().toString();
+                    for (Map.Entry<String, Boolean> entry : entries) {
+                        if (entry.getKey().equals(textCheckBox)) {
+                            CheckBox checkBox = checkBoxList.get(j);
+                            if (entry.getValue()) {
+                                checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_green));
+                                break;
+                            } else {
+                                if (checkBox.isChecked()) {
+                                    checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_red));
+                                    break;
+                                } else {
+                                    checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_btn_blue));
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
+                break;
             }
             task.setResolved(true); //встановити флаг чи вирішена задача
-
+            //якщо номер поточного завдання більший аніж у SQLite Statistic інкременую їх
+            if (currentStatisticTask.getQuantitySolvedTasks() < idTask) {
+                currentStatisticTask.setQuantitySolvedTasks(idTask);
+                mainViewModel.insertStatistic(currentStatisticTask);
+            }
             // кнопку перевірки відповіді, показу правильної відповіді та чекбокси роблю не активними
             buttonCheckAnswer.setVisibility(View.INVISIBLE);
             buttonShowRightAnswer.setVisibility(View.INVISIBLE);

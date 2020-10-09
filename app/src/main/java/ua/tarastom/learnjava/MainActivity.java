@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import ua.tarastom.learnjava.data.Task;
@@ -53,105 +54,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadDataToFirestore() {
-        ArrayList<String> listAllAnswer = new ArrayList<>();
-        listAllAnswer.add("1");
-        listAllAnswer.add("2");
-        listAllAnswer.add("3");
-        listAllAnswer.add("4");
-        listAllAnswer.add("5");
 
-        ArrayList<Boolean> listRightAnswer = new ArrayList<>();
-        listRightAnswer.add(false);
-        listRightAnswer.add(true);
-        listRightAnswer.add(false);
-        listRightAnswer.add(false);
-        listRightAnswer.add(true);
+        for (int i = 0; i < 10; i++) {
+            List<String> topic = new ArrayList<>();
+            topic.add("Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль");
+            List<String> question = new ArrayList<>();
+            question.add("Какие из следующих идентификаторов являются действительными идентификаторами Java? (Выберите все, что подходит)");
+            question.add("Which of the following are valid Java identifiers? (Choose all that apply)");
 
+            Map<String, Boolean> answer = new LinkedHashMap<>();
+            answer.put("1", false);
+            answer.put("2", true);
+            answer.put("3", false);
+            answer.put("4", true);
+            answer.put("5", false);
 
-        db.collection("taskList").add(new Task(1,
-                "Арифметические и логические операции, операции сравнения и присваивания.",
-                "Какая строка не скомпилируется?",
-                "       1. byte b11 = 125;\n" +
-                        "       2. byte b21 = -228;\n" +
-                        "       3. byte b31 = 0b0101;\n" +
-                        "       4. byte b4 = 0b101;\n" +
-                        "       5. byte b5 = 225",
-                listAllAnswer,
-                listRightAnswer, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        ArrayList<String> listAllAnswer2 = new ArrayList<>();
-        listAllAnswer2.add("5");
-        listAllAnswer2.add("4");
-        listAllAnswer2.add("3");
+            db.collection("taskList").add(
+                    new Task(1, 1, topic, question,
+                    "       1. byte b11 = 125;\n" +
+                            "       2. byte b21 = -228;\n" +
+                            "       3. byte b31 = 0b0101;\n" +
+                            "       4. byte b4 = 0b101;\n" +
+                            "       5. byte b5 = 225", answer, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
-        ArrayList<Boolean> listRightAnswer2 = new ArrayList<>();
-        listRightAnswer2.add(false);
-        listRightAnswer2.add(false);
-        listRightAnswer2.add(true);
-        db.collection("taskList").add(new Task(3,
-                "Арифметические и логические операции, операции сравнения и присваивания.",
-                "Какая строка не скомпилируется?",
-                "       1. int i8 = 10;\n" +
-                        "       2. int i9 = 1_000_000_000;\n" +
-                        "       3. int i10 = _1000_000_000;\n" +
-                        "       4. int i4 = 1_0_00_00_0_000;\n" +
-                        "       5. int i5 = 10_000_000_000;",
-                listAllAnswer2,
-                listRightAnswer2, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        ArrayList<String> listAllAnswer3 = new ArrayList<>();
-        listAllAnswer3.add("1");
-        listAllAnswer3.add("2");
-        listAllAnswer3.add("3");
-        listAllAnswer3.add("4");
-        listAllAnswer3.add("5");
-
-        ArrayList<Boolean> listRightAnswer3 = new ArrayList<>();
-        listRightAnswer3.add(false);
-        listRightAnswer3.add(true);
-        listRightAnswer3.add(false);
-        listRightAnswer3.add(false);
-        listRightAnswer3.add(true);
-
-        db.collection("taskList").add(new Task(4,
-                "Арифметические и логические операции, операции сравнения и присваивания.",
-                "Какая строка не скомпилируется?",
-                "       1. byte b4 = 125;\n" +
-                        "       2. byte b5 = -228;\n" +
-                        "       3. byte b6 = 0b0101;\n" +
-                        "       4. byte b7 = 0b101;\n" +
-                        "       5. byte b8 = 225",
-                listAllAnswer3,
-                listRightAnswer3, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(MainActivity.this, "Success!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public void uploadListQuantityTasksToFirestore() {

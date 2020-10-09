@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:minHeight="42dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/style_btn"
+    android:background="@drawable/style_item_recyclerview"
     >
 
     <androidx.constraintlayout.widget.Guideline
@@ -22,7 +22,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         tools:text="TextViewTopicCategory"
-        android:textStyle="bold"
         android:textSize="18sp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"

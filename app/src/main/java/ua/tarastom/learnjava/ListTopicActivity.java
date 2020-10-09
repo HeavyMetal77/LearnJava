@@ -68,7 +68,6 @@ public class ListTopicActivity extends AppCompatActivity {
 //            }
             Topic topic = topicAdapter.getTopicList().get(position);
             intent.putExtra("position", topic.getId());
-            intent.putExtra("nameTopic", topic.getNameTopic());
             startActivity(intent);
         });
     }

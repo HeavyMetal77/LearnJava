@@ -80,12 +80,9 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
             textViewTopicCategory = itemView.findViewById(R.id.textViewTopicCategory);
             textViewSolvedProblem = itemView.findViewById(R.id.textViewSolvedProblem);
             textViewCorrectlySolvedProblem = itemView.findViewById(R.id.textViewCorrectlySolvedProblem);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (onTopicClickListener != null) {
-                        onTopicClickListener.onTopicClick(getAdapterPosition());
-                    }
+            itemView.setOnClickListener(view -> {
+                if (onTopicClickListener != null) {
+                    onTopicClickListener.onTopicClick(getAdapterPosition());
                 }
             });
         }

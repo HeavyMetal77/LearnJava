@@ -1,64 +1,30 @@
 package ua.tarastom.learnjava.data;
 
-import androidx.room.PrimaryKey;
-
 import java.util.List;
+import java.util.Map;
 
-//@Entity(tableName = "tasks")
 public class Task {
-    @PrimaryKey
-    private int idTask;
-    private String topic; //тема
-    private String question; //запитання
+    private int idTask; //номер завдання
+    private int idTopic; //номер теми
+    private List<String> topic; //тема
+    private List<String> question; //запитання
     private String taskStr; //суть завдання
-    private List<String> allAnswersList; //всі відповіді
-    private List<Boolean> rightAnswers; //правильні відповіді
+    private Map<String, Boolean> answermap;
+    //    private List<String> allAnswersList; //всі відповіді
+//    private List<Boolean> rightAnswers; //правильні відповіді
     private boolean isResolved; //чи вирішена задача
 
     public Task() {
     }
 
-//    @Ignore
-    public Task(int idTask, String topic, String question, String taskStr, List<String> allAnswersList, List<Boolean> rightAnswers, boolean isResolved) {
+    public Task(int idTask, int idTopic, List<String> topic, List<String> question, String taskStr, Map<String, Boolean> answermap, boolean isResolved) {
         this.idTask = idTask;
+        this.idTopic = idTopic;
         this.topic = topic;
         this.question = question;
         this.taskStr = taskStr;
-        this.allAnswersList = allAnswersList;
-        this.rightAnswers = rightAnswers;
+        this.answermap = answermap;
         this.isResolved = isResolved;
-    }
-
-    public String getTaskStr() {
-        return taskStr;
-    }
-
-    public void setTaskStr(String taskStr) {
-        this.taskStr = taskStr;
-    }
-
-    public List<String> getAllAnswersList() {
-        return allAnswersList;
-    }
-
-    public void setAllAnswersList(List<String> allAnswersList) {
-        this.allAnswersList = allAnswersList;
-    }
-
-    public List<Boolean> getRightAnswers() {
-        return rightAnswers;
-    }
-
-    public void setRightAnswers(List<Boolean> rightAnswers) {
-        this.rightAnswers = rightAnswers;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
     }
 
     public int getIdTask() {
@@ -69,19 +35,51 @@ public class Task {
         this.idTask = idTask;
     }
 
+    public int getIdTopic() {
+        return idTopic;
+    }
+
+    public void setIdTopic(int idTopic) {
+        this.idTopic = idTopic;
+    }
+
+    public List<String> getTopic() {
+        return topic;
+    }
+
+    public void setTopic(List<String> topic) {
+        this.topic = topic;
+    }
+
+    public List<String> getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(List<String> question) {
+        this.question = question;
+    }
+
+    public String getTaskStr() {
+        return taskStr;
+    }
+
+    public void setTaskStr(String taskStr) {
+        this.taskStr = taskStr;
+    }
+
+    public void setAnswermap(Map<String, Boolean> answermap) {
+        this.answermap = answermap;
+    }
+
+    public Map<String, Boolean> getAnswermap() {
+        return answermap;
+    }
+
     public boolean isResolved() {
         return isResolved;
     }
 
     public void setResolved(boolean resolved) {
         isResolved = resolved;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
     }
 }
