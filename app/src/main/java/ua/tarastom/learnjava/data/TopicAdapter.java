@@ -1,11 +1,13 @@
 package ua.tarastom.learnjava.data;
 
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -59,10 +61,28 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     @Override
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = topicList.get(position);
-        Statistic statistic = statisticList.get(position);
         holder.textViewTopicCategory.setText(topic.getNameTopic());
-        holder.textViewSolvedProblem.setText(String.valueOf(topic.getQuantityTasksInTopic()));
-        holder.textViewCorrectlySolvedProblem.setText(String.valueOf(statistic.getNumberOfCorrectlySolvedTasks()));
+
+        Statistic statisticsById = statisticList.get(position);
+        int quantityTasksInTopic = statisticsById.getQuantityTasksInTopic();
+        int quantitySolvedTasks = statisticsById.getQuantitySolvedTasks();
+        int numberOfCorrectlySolvedTasks = statisticsById.getNumberOfCorrectlySolvedTasks();
+        int incorrectSolvedTask = quantitySolvedTasks - numberOfCorrectlySolvedTasks;
+
+        String quantitySolvedTasksStr = getColoredSpanned(String.valueOf(quantitySolvedTasks),
+                String.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorLabelText)));
+        String numberOfCorrectlySolvedTasksStr = getColoredSpanned(String.valueOf(numberOfCorrectlySolvedTasks),
+                String.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorTextCorrectly)));
+        String incorrectSolvedTaskStr = getColoredSpanned(String.valueOf(incorrectSolvedTask),
+                String.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorError)));
+
+        holder.textViewQuantityTasksInTopic.setText(String.valueOf(quantityTasksInTopic));
+        holder.textViewSolvedProblem
+                .setText(Html.fromHtml(quantitySolvedTasksStr + "/ " + numberOfCorrectlySolvedTasksStr + "/ " + incorrectSolvedTaskStr));
+    }
+
+    private String getColoredSpanned(String text, String color) {
+        return String.format("<font color=%s>%s</font>", color, text);
     }
 
     @Override
@@ -72,14 +92,14 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
     class TopicViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewTopicCategory;
+        private TextView textViewQuantityTasksInTopic;
         private TextView textViewSolvedProblem;
-        private TextView textViewCorrectlySolvedProblem;
 
         public TopicViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewTopicCategory = itemView.findViewById(R.id.textViewTopicCategory);
+            textViewQuantityTasksInTopic = itemView.findViewById(R.id.textViewQuantityTasksInTopic);
             textViewSolvedProblem = itemView.findViewById(R.id.textViewSolvedProblem);
-            textViewCorrectlySolvedProblem = itemView.findViewById(R.id.textViewCorrectlySolvedProblem);
             itemView.setOnClickListener(view -> {
                 if (onTopicClickListener != null) {
                     onTopicClickListener.onTopicClick(getAdapterPosition());

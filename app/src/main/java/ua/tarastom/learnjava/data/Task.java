@@ -9,9 +9,7 @@ public class Task {
     private List<String> topic; //тема
     private List<String> question; //запитання
     private String taskStr; //суть завдання
-    private Map<String, Boolean> answermap;
-    //    private List<String> allAnswersList; //всі відповіді
-//    private List<Boolean> rightAnswers; //правильні відповіді
+    private Map<String, Boolean> answermap; //всі відповіді / правильні відповіді
     private boolean isResolved; //чи вирішена задача
 
     public Task() {

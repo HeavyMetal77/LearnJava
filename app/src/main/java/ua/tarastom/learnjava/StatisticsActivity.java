@@ -15,12 +15,10 @@ public class StatisticsActivity extends AppCompatActivity {
 
     private MainViewModel mainViewModel;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
-
 
         if (mainViewModel == null) {
             mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);

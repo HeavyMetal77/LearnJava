@@ -19,18 +19,11 @@ import ua.tarastom.learnjava.R;
 public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.StatisticViewHolder> {
     private List<String> statisticResult;
     private List<Statistic> allStatistics;
-    private StatisticAdapter.OnStatisticClickListener onStatisticClickListener;
     private MainViewModel mainViewModel;
-
-
-    public interface OnStatisticClickListener {
-        void OnStatisticClick(int position);
-    }
 
     public StatisticAdapter(MainViewModel mainViewModel) {
         this.mainViewModel = mainViewModel;
     }
-
 
     public List<Statistic> getStatisticResult() {
         return allStatistics;
@@ -47,15 +40,11 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
         notifyDataSetChanged();
     }
 
-    public void setOnStatisticClickListener(OnStatisticClickListener onStatisticClickListener) {
-        this.onStatisticClickListener = onStatisticClickListener;
-    }
-
     @NonNull
     @Override
     public StatisticViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item_statistic, parent, false);
-        return new StatisticAdapter.StatisticViewHolder(view);
+        return new StatisticViewHolder(view);
     }
 
     @Override
@@ -98,7 +87,7 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
         return statisticResult.size();
     }
 
-    class StatisticViewHolder extends RecyclerView.ViewHolder {
+    static class StatisticViewHolder extends RecyclerView.ViewHolder {
         private TextView editTextResultStat;
         private Button buttonClearTopic;
         private TextView textViewStat;
@@ -109,9 +98,6 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
             buttonClearTopic = itemView.findViewById(R.id.buttonClearTopic);
             textViewStat = itemView.findViewById(R.id.textViewStat);
             itemView.setOnClickListener(view -> {
-                if (onStatisticClickListener != null) {
-                    onStatisticClickListener.OnStatisticClick(getAdapterPosition());
-                }
             });
         }
     }

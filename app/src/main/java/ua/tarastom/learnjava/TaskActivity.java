@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -35,7 +36,7 @@ public class TaskActivity extends AppCompatActivity {
     private TextView textViewLabelTask;
     private TextView textLabelResultTask;
     private TextView textViewQuestion;
-    private TextView editTextTextMultiLine;
+    private TextView textViewTextMultiLine;
     private List<CheckBox> checkBoxList;
     private ImageView imageViewArrowBack;
     private ImageView imageViewArrowForward;
@@ -109,26 +110,28 @@ public class TaskActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList = queryDocumentSnapshots.toObjects(Task.class);
                     generateNextTask(idTask);
-                }).addOnFailureListener(e -> {
-            startActivity(new Intent(getApplicationContext(), ListTopicActivity.class));
-        });
+                }).addOnFailureListener(e -> startActivity(new Intent(getApplicationContext(), ListTopicActivity.class)));
 
         textViewTopic = findViewById(R.id.textViewLabelTopic);
         textViewLabelTask = findViewById(R.id.textViewLabelTask);
         textLabelResultTask = findViewById(R.id.textLabelResultTask);
         textViewQuestion = findViewById(R.id.textViewLabelQuestion);
-        editTextTextMultiLine = findViewById(R.id.editTextTextMultiLine);
+        textViewTextMultiLine = findViewById(R.id.textViewTextMultiLine);
         CheckBox checkBox1 = findViewById(R.id.checkBox1);
         CheckBox checkBox2 = findViewById(R.id.checkBox2);
         CheckBox checkBox3 = findViewById(R.id.checkBox3);
         CheckBox checkBox4 = findViewById(R.id.checkBox4);
         CheckBox checkBox5 = findViewById(R.id.checkBox5);
+        CheckBox checkBox6 = findViewById(R.id.checkBox6);
+        CheckBox checkBox7 = findViewById(R.id.checkBox7);
         checkBoxList = new ArrayList<>();
         checkBoxList.add(checkBox1);
         checkBoxList.add(checkBox2);
         checkBoxList.add(checkBox3);
         checkBoxList.add(checkBox4);
         checkBoxList.add(checkBox5);
+        checkBoxList.add(checkBox6);
+        checkBoxList.add(checkBox7);
         buttonShowRightAnswer = findViewById(R.id.buttonShowRightAnswer);
         buttonCheckAnswer = findViewById(R.id.button_check_answer);
         scrollViewTaskActivity = findViewById(R.id.scrollViewTaskActivity);
@@ -177,7 +180,6 @@ public class TaskActivity extends AppCompatActivity {
         }
         Task task = taskList.get(idTask);
 
-
         List<Integer> listOfIncorrectlySolvedProblems = currentStatisticTask.getListOfIncorrectlySolvedProblems();
         if (listOfIncorrectlySolvedProblems != null
                 && listOfIncorrectlySolvedProblems.size() != 0
@@ -195,7 +197,6 @@ public class TaskActivity extends AppCompatActivity {
             scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorBackgroundCorrectly));
         }
 
-
         //встановлюю написи
         String topic = getResources().getString(R.string.topic_label) + " " + task.getTopic().get(language);
         textViewTopic.setText(topic);
@@ -208,7 +209,7 @@ public class TaskActivity extends AppCompatActivity {
 
         if (taskList != null && taskList.size() > 0) {
             textViewQuestion.setText(task.getQuestion().get(language));
-            editTextTextMultiLine.setText(task.getTaskStr());
+            textViewTextMultiLine.setText(task.getTaskStr());
             int answerListSize = task.getAnswermap().size();
             int countCheckbox = 0;
             for (String key : task.getAnswermap().keySet()) {
@@ -223,6 +224,13 @@ public class TaskActivity extends AppCompatActivity {
             for (int i = checkBoxList.size() - 1; i >= checkBoxList.size() - unusedCheckBoxes; i--) {
                 checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
             }
+            //для activity_task.xml встановлюю програмно значення buttonCheckAnswer
+            // -  app:layout_constraintTop_toBottomOf="@id/checkBoxXXXX"
+            //під останнім checkBox
+            CheckBox lastCheckBox = checkBoxList.get(answerListSize-1);
+            ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) buttonCheckAnswer.getLayoutParams();
+            layoutParams.topToBottom = lastCheckBox.getId();
+
             //якщо завдання вже вирішувалось - показую правильні відповіді
             if (task.isResolved() || currentStatisticTask.getQuantitySolvedTasks() > idTask) {
                 showRightAnswer();

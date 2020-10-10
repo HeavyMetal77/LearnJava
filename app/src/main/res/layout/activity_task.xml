@@ -5,6 +5,7 @@
     android:id="@+id/scrollViewTaskActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="8dp"
     android:background="@color/colorWhite"
     tools:context=".TaskActivity">
 
@@ -31,9 +32,10 @@
             android:layout_marginBottom="8dp"
             android:text="@string/topic_label"
             android:textColor="@color/colorLabelText"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <TextView
             android:id="@+id/textViewLabelTask"
@@ -70,14 +72,14 @@
             android:padding="8dp"
             android:text="@string/question"
             android:textColor="@color/colorLabelText"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textLabelResultTask" />
 
-        <EditText
-            android:id="@+id/editTextTextMultiLine"
+        <TextView
+            android:id="@+id/textViewTextMultiLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -85,7 +87,6 @@
             android:ems="10"
             android:enabled="false"
             android:gravity="start|top"
-            android:inputType="textMultiLine"
             android:textColor="@color/colorTextTask"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -101,7 +102,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editTextTextMultiLine" />
+            app:layout_constraintTop_toBottomOf="@id/textViewTextMultiLine" />
 
         <CheckBox
             android:id="@+id/checkBox1"
@@ -189,6 +190,42 @@
             app:layout_constraintStart_toStartOf="parent"
             />
 
+        <CheckBox
+            android:id="@+id/checkBox6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox5"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <CheckBox
+            android:id="@+id/checkBox7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="28dp"
+            android:background="@drawable/style_btn"
+            android:onClick="onClickCheckBox"
+            android:text="@string/checkbox5"
+            android:textColor="@color/colorLabelText"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:buttonTint="@color/colorLabelText"
+            app:layout_constraintTop_toBottomOf="@id/checkBox6"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
         <Button
             android:id="@+id/button_check_answer"
             android:layout_width="wrap_content"
@@ -199,7 +236,7 @@
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:text="@string/submit"
-            app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:layout_constraintTop_toBottomOf="@id/checkBox7"
             app:layout_constraintStart_toStartOf="@id/imageViewArrowBack"
             app:layout_constraintEnd_toEndOf="@id/imageViewArrowForward"
             />
@@ -212,7 +249,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/arrow_back"
             android:onClick="goPreviousTask"
-            app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:layout_constraintTop_toTopOf="@id/button_check_answer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/button_check_answer"
             app:srcCompat="@drawable/back48" />
@@ -225,7 +262,7 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/arrow_back"
             android:onClick="goNextTask"
-            app:layout_constraintTop_toBottomOf="@id/checkBox5"
+            app:layout_constraintTop_toTopOf="@id/button_check_answer"
             app:layout_constraintStart_toEndOf="@id/button_check_answer"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/arrow48" />
