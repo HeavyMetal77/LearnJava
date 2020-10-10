@@ -293,7 +293,7 @@ public class TaskActivity extends AppCompatActivity {
                 //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
                 if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size() - 1 < idTask) {
                     task.setResolved(true); //встановити флаг чи вирішена задача
-                    currentStatisticTask.getListOfIncorrectlySolvedProblems().add(1);//встановити флаг - вирішена задача
+                    currentStatisticTask.getListOfIncorrectlySolvedProblems().add(1);//встановити флаг - вирішена задача правильно
                     int numberOfCorrectlySolvedTasks = currentStatisticTask.getNumberOfCorrectlySolvedTasks(); //кількість правильно вирішених завдань інкременую
                     currentStatisticTask.setNumberOfCorrectlySolvedTasks(numberOfCorrectlySolvedTasks + 1);
                     currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks() + 1);  //збільшую кількість вирішених задач (правильних+неправильних)
@@ -313,6 +313,10 @@ public class TaskActivity extends AppCompatActivity {
                 textLabelResultTask.setText(labelLabelResultTask);
                 mainViewModel.insertStatistic(currentStatisticTask);
             } else {
+                //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
+                if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size() - 1 < idTask) {
+                    currentStatisticTask.getListOfIncorrectlySolvedProblems().add(0);//встановити флаг - вирішена задача неправильно
+                }
                 Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
                 //загальний фон змінюється на світло-червоний
@@ -330,8 +334,6 @@ public class TaskActivity extends AppCompatActivity {
         }
         if (taskList.size() > 0) {
             Task task = taskList.get(idTask);
-            int size = task.getAnswermap().size();
-            for (int i = 0; i < size; i++) {
                 //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
                 Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
                 for (int j = 0; j < entries.size(); j++) {
@@ -341,21 +343,18 @@ public class TaskActivity extends AppCompatActivity {
                             CheckBox checkBox = checkBoxList.get(j);
                             if (entry.getValue()) {
                                 checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_green));
-                                break;
                             } else {
                                 if (checkBox.isChecked()) {
                                     checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_red));
-                                    break;
                                 } else {
                                     checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_btn_blue));
-                                    break;
                                 }
                             }
+                            break;
                         }
                     }
                 }
-                break;
-            }
+
             task.setResolved(true); //встановити флаг чи вирішена задача
             //якщо номер поточного завдання більший аніж у SQLite Statistic інкременую їх
             if (currentStatisticTask.getQuantitySolvedTasks() < idTask) {

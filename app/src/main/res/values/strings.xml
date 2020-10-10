@@ -34,5 +34,7 @@
     <string name="label_button_test_mode">Режим тестирования</string>
     <string name="label_button_statistics">Статистика</string>
     <string name="item_exit_account">Выход</string>
+    <string name="label_stat">Результати вирішення завдань:</string>
+    <string name="button_clear">Очистити</string>
 
 </resources>

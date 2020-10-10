@@ -52,13 +52,13 @@ public class ListTopicActivity extends AppCompatActivity {
     }
 
     private void loadRecyclerView() {
-        RecyclerView recyclerViewTest = findViewById(R.id.recyclerViewTest);
+        RecyclerView recyclerViewTopic = findViewById(R.id.recyclerViewTopic);
         topicAdapter = new TopicAdapter();
-        recyclerViewTest.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewTopic.setLayoutManager(new LinearLayoutManager(this));
         Collections.sort(topicList, (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
         topicAdapter.setTopicList(topicList);
         topicAdapter.setStatisticList(statisticList);
-        recyclerViewTest.setAdapter(topicAdapter);
+        recyclerViewTopic.setAdapter(topicAdapter);
         topicAdapter.setOnTopicClickListener(position -> {
             Intent intent;
 //            if (mode == 2) {
@@ -123,10 +123,7 @@ public class ListTopicActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //эмулируем нажатие на HOME, сворачивая приложение
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }
