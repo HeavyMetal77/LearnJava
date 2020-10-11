@@ -36,5 +36,8 @@
     <string name="item_exit_account">Выход</string>
     <string name="label_stat">Результати вирішення завдань:</string>
     <string name="button_clear">Очистити</string>
+    <string name="label_button_go_main">Перейти к решению задач</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="user_s_photo">user`s_photo</string>
 
 </resources>
