@@ -57,14 +57,6 @@ public class TaskActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.itemMain) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        }
-        if (item.getItemId() == R.id.itemTopics) {
-            Intent intent = new Intent(this, ListTopicActivity.class);
-            startActivity(intent);
-        }
         if (item.getItemId() == R.id.itemStatistics) {
             Intent intent = new Intent(this, StatisticsActivity.class);
             startActivity(intent);
@@ -89,7 +81,6 @@ public class TaskActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int position = intent.getIntExtra("position", -1);
-        String nameTopic = intent.getStringExtra("nameTopic");
 
         //отримуємо номер останнього вирішеного завдання з SQLite Statistic
         List<Statistic> allStatistics = mainViewModel.getAllStatistics();
@@ -227,7 +218,7 @@ public class TaskActivity extends AppCompatActivity {
             //для activity_task.xml встановлюю програмно значення buttonCheckAnswer
             // -  app:layout_constraintTop_toBottomOf="@id/checkBoxXXXX"
             //під останнім checkBox
-            CheckBox lastCheckBox = checkBoxList.get(answerListSize-1);
+            CheckBox lastCheckBox = checkBoxList.get(answerListSize - 1);
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) buttonCheckAnswer.getLayoutParams();
             layoutParams.topToBottom = lastCheckBox.getId();
 
@@ -324,7 +315,7 @@ public class TaskActivity extends AppCompatActivity {
                 //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
                 if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size() - 1 < idTask) {
                     currentStatisticTask.getListOfIncorrectlySolvedProblems().add(0);//встановити флаг - вирішена задача неправильно
-                    currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks()+1);
+                    currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks() + 1);
                 }
                 Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
@@ -343,26 +334,26 @@ public class TaskActivity extends AppCompatActivity {
         }
         if (taskList.size() > 0) {
             Task task = taskList.get(idTask);
-                //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
-                Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
-                for (int j = 0; j < entries.size(); j++) {
-                    String textCheckBox = checkBoxList.get(j).getText().toString();
-                    for (Map.Entry<String, Boolean> entry : entries) {
-                        if (entry.getKey().equals(textCheckBox)) {
-                            CheckBox checkBox = checkBoxList.get(j);
-                            if (entry.getValue()) {
-                                checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_green));
+            //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
+            Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
+            for (int j = 0; j < entries.size(); j++) {
+                String textCheckBox = checkBoxList.get(j).getText().toString();
+                for (Map.Entry<String, Boolean> entry : entries) {
+                    if (entry.getKey().equals(textCheckBox)) {
+                        CheckBox checkBox = checkBoxList.get(j);
+                        if (entry.getValue()) {
+                            checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_green));
+                        } else {
+                            if (checkBox.isChecked()) {
+                                checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_red));
                             } else {
-                                if (checkBox.isChecked()) {
-                                    checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_checkbox_red));
-                                } else {
-                                    checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_btn_blue));
-                                }
+                                checkBox.setBackground(ContextCompat.getDrawable(this, R.drawable.style_btn_blue));
                             }
-                            break;
                         }
+                        break;
                     }
                 }
+            }
 
             task.setResolved(true); //встановити флаг чи вирішена задача
             //якщо номер поточного завдання більший аніж у SQLite Statistic інкременую їх

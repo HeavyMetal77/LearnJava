@@ -1,5 +1,6 @@
 package ua.tarastom.learnjava;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -32,5 +33,12 @@ public class StatisticsActivity extends AppCompatActivity {
         statisticAdapter.setStatisticResult(mainViewModel.getAllStatistics());
 
         textViewLabelStat.setText("Статистика по темам: \n");
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, ListTopicActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

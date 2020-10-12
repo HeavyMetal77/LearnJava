@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         buttonGoMain = findViewById(R.id.buttonGoMain);
         buttonGoMain.setOnClickListener(view -> {
-            Intent intent = new Intent(view.getContext(), MainActivity.class);
+            Intent intent = new Intent(view.getContext(), ListTopicActivity.class);
             startActivity(intent);
             finish();
         });
@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (getIntent().hasExtra("exit")) {
-            currentUser = null;
+            signOut();
         }
         updateUI(currentUser);
     }
@@ -183,5 +183,6 @@ public class LoginActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        finish();
     }
 }
