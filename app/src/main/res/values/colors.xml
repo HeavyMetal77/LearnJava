@@ -2,15 +2,17 @@
 <resources>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#95ff95</color>
+    <color name="colorAccent">#c0d6a7</color>
     <color name="colorBackground">#C7E3FF</color>
     <color name="colorBackground2">#CCCCCC</color>
+    <color name="colorBackground3">#f0f0f0</color>
     <color name="colorLabelText">#000000</color>
     <color name="colorTextTask">#663300</color>
+    <color name="colorTextTask2">#949494</color>
     <color name="colorButton">#58a9d4</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="colorBlue">#C7E3FF</color>
-    <color name="colorError">#ffa280</color>
+    <color name="colorBlue">#d4e3f0</color>
+    <color name="colorError">#eaa77f</color>
     <color name="colorFon">#edebe9</color>
     <color name="colorText">#787878</color>
     <color name="colorTextCorrectly">#00CC00</color>
