@@ -51,7 +51,7 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
     public void onBindViewHolder(@NonNull StatisticViewHolder holder, int position) {
         String nameTopic = statisticResult.get(position);
         if (statisticResult.size() > 0) {
-            holder.editTextResultStat.setText(nameTopic);
+            holder.textResultStat.setText(nameTopic);
         }
         Statistic statisticsById = mainViewModel.getStatisticByNameTopic(nameTopic);
         int quantityTasksInTopic = statisticsById.getQuantityTasksInTopic();
@@ -88,13 +88,13 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
     }
 
     static class StatisticViewHolder extends RecyclerView.ViewHolder {
-        private TextView editTextResultStat;
+        private TextView textResultStat;
         private Button buttonClearTopic;
         private TextView textViewStat;
 
         public StatisticViewHolder(@NonNull View itemView) {
             super(itemView);
-            editTextResultStat = itemView.findViewById(R.id.editTextResultStat);
+            textResultStat = itemView.findViewById(R.id.editTextResultStat);
             buttonClearTopic = itemView.findViewById(R.id.buttonClearTopic);
             textViewStat = itemView.findViewById(R.id.textViewStat);
             itemView.setOnClickListener(view -> {

@@ -40,13 +40,14 @@ public class TaskActivity extends AppCompatActivity {
     private List<CheckBox> checkBoxList;
     private ImageView imageViewArrowBack;
     private ImageView imageViewArrowForward;
-    private int idTask = 0; //номер завдання
+    private int taskId = 0; //номер завдання
     private Button buttonShowRightAnswer;
     private Button buttonCheckAnswer;
     private MainViewModel mainViewModel;
     private Statistic currentStatisticTask;
     private ScrollView scrollViewTaskActivity;
     private int language = 0;
+    private String nameCollection = "taskList";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,35 +75,40 @@ public class TaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-
         if (mainViewModel == null) {
             mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
         }
-
         Intent intent = getIntent();
-        int position = intent.getIntExtra("position", -1);
+        int idTopic = intent.getIntExtra("idTopic", -1);
+        String nameTopic = intent.getStringExtra("nameTopic");
+        int quantityTasksInTopic = intent.getIntExtra("quantityTasksInTopic", 0);
 
-        //отримуємо номер останнього вирішеного завдання з SQLite Statistic
-        List<Statistic> allStatistics = mainViewModel.getAllStatistics();
-        currentStatisticTask = allStatistics.get(position - 1);
-        int quantitySolvedTasks = currentStatisticTask.getQuantitySolvedTasks();
-        if (quantitySolvedTasks > idTask) {
-            idTask = quantitySolvedTasks;
-        }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(nameCollection)
+                .whereEqualTo("idTopic", idTopic)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    taskList = queryDocumentSnapshots.toObjects(Task.class);
+                    //отримуємо номер останнього вирішеного завдання з SQLite Statistic
+                    currentStatisticTask = mainViewModel.getStatisticByNameTopic(nameTopic);
+                    if (currentStatisticTask != null) {
+                        int quantitySolvedTasks = currentStatisticTask.getQuantitySolvedTasks();
+                        if (quantitySolvedTasks > taskId) {
+                            taskId = quantitySolvedTasks;
+                        }
+                    } else {
+                        Task task = taskList.get(taskId);
+                        currentStatisticTask = new Statistic(task.getIdTopic(), task.getTopic().get(language), quantityTasksInTopic);
+                        currentStatisticTask.setQuantitySolvedTasks(0);
+                        currentStatisticTask.setNumberOfCorrectlySolvedTasks(0);
+                        mainViewModel.insertStatistic(currentStatisticTask);
+                    }
+                    generateNextTask(taskId);
+                }).addOnFailureListener(e -> startActivity(new Intent(getApplicationContext(), ListTopicActivity.class)));
 
         imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
         imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
         imageViewArrowBack.setVisibility(View.INVISIBLE);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("taskList")
-                .whereEqualTo("idTopic", position)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    taskList = queryDocumentSnapshots.toObjects(Task.class);
-                    generateNextTask(idTask);
-                }).addOnFailureListener(e -> startActivity(new Intent(getApplicationContext(), ListTopicActivity.class)));
-
         textViewTopic = findViewById(R.id.textViewLabelTopic);
         textViewLabelTask = findViewById(R.id.textViewLabelTask);
         textLabelResultTask = findViewById(R.id.textLabelResultTask);
@@ -178,7 +184,6 @@ public class TaskActivity extends AppCompatActivity {
                 && listOfIncorrectlySolvedProblems.get(idTask) == 0) {
             //загальний фон змінюється на світло-червоний
             scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorBackgroundIncorrectly));
-
         }
         if (listOfIncorrectlySolvedProblems != null
                 && listOfIncorrectlySolvedProblems.size() != 0
@@ -238,31 +243,31 @@ public class TaskActivity extends AppCompatActivity {
     //метод онклік для наступного завдання
     public void goNextTask(View view) {
         //заборонено перехід до наступного завдання поки не виконано поточне
-        boolean resolved = taskList.get(idTask).isResolved();
+        boolean resolved = taskList.get(taskId).isResolved();
         if (!resolved) {
             Toast.makeText(this, "Спочатку вирішіть це завдання!", Toast.LENGTH_SHORT).show();
             return;
         }
         //переходимо до наступного завдання
-        if (taskList != null && idTask < taskList.size() - 1) {
-            idTask += 1;
-            generateNextTask(idTask);
+        if (taskList != null && taskId < taskList.size() - 1) {
+            taskId += 1;
+            generateNextTask(taskId);
             buttonShowRightAnswer.setVisibility(View.INVISIBLE);
         }
     }
 
     //метод онклік для попереднього завдання
     public void goPreviousTask(View view) {
-        if (idTask > 0) {
-            idTask -= 1;
-            generateNextTask(idTask);
+        if (taskId > 0) {
+            taskId -= 1;
+            generateNextTask(taskId);
             buttonShowRightAnswer.setVisibility(View.INVISIBLE);
         }
     }
 
     //метод онклік для перевірки правильності відповіді
     public void checkRightAnswer(View view) {
-        isRightAnswers(idTask);
+        isRightAnswers(taskId);
     }
 
     //перевірка правильності відповіді
@@ -329,11 +334,11 @@ public class TaskActivity extends AppCompatActivity {
     //метод для показу правильності відповіді
     public void showRightAnswer() {
         //якщо завдань в темі більше не має встановлюю idTask на останнє
-        if (idTask >= taskList.size()) {
-            idTask = taskList.size() - 1;
+        if (taskId >= taskList.size()) {
+            taskId = taskList.size() - 1;
         }
         if (taskList.size() > 0) {
-            Task task = taskList.get(idTask);
+            Task task = taskList.get(taskId);
             //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
             Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
             for (int j = 0; j < entries.size(); j++) {
@@ -357,8 +362,8 @@ public class TaskActivity extends AppCompatActivity {
 
             task.setResolved(true); //встановити флаг чи вирішена задача
             //якщо номер поточного завдання більший аніж у SQLite Statistic інкременую їх
-            if (currentStatisticTask.getQuantitySolvedTasks() < idTask) {
-                currentStatisticTask.setQuantitySolvedTasks(idTask);
+            if (currentStatisticTask.getQuantitySolvedTasks() < taskId) {
+                currentStatisticTask.setQuantitySolvedTasks(taskId);
                 mainViewModel.insertStatistic(currentStatisticTask);
             }
             // кнопку перевірки відповіді, показу правильної відповіді та чекбокси роблю не активними
@@ -391,4 +396,10 @@ public class TaskActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        taskList = null;
+//    }
 }

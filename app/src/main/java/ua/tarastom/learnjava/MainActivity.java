@@ -5,12 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -32,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-//        uploadDataToFirestore(); //тест завантаження даних в Cloud Firestore
+        uploadDataToFirestore(); //тест завантаження даних в Cloud Firestore
 //        uploadListQuantityTasksToFirestore(); //тест завантаження даних в Cloud Firestore
     }
 
@@ -70,23 +66,38 @@ public class MainActivity extends AppCompatActivity {
             answer.put("5", false);
 
             db.collection("taskList").add(
-                    new Task(1, 1, topic, question,
+                    new Task(i, 0, topic, question,
                     "       1. byte b11 = 125;\n" +
                             "       2. byte b21 = -228;\n" +
                             "       3. byte b31 = 0b0101;\n" +
                             "       4. byte b4 = 0b101;\n" +
-                            "       5. byte b5 = 225", answer, false)).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-                }
-            });
+                            "       5. byte b5 = 225", answer, false)).addOnSuccessListener(documentReference -> Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show());
         }
+
+
+        for (int i = 0; i < 10; i++) {
+            List<String> topic = new ArrayList<>();
+            topic.add("Арифметические и логические операции, операции сравнения и присваивания.");
+            List<String> question = new ArrayList<>();
+            question.add("Какие ?");
+            question.add("Which ? (Choose all that apply)");
+
+            Map<String, Boolean> answer = new LinkedHashMap<>();
+            answer.put("1", false);
+            answer.put("2", true);
+            answer.put("3", false);
+            answer.put("4", true);
+            answer.put("5", false);
+
+            db.collection("taskList").add(
+                    new Task(i, 1, topic, question,
+                            "       1. byte b11 = 125;\n" +
+                                    "       2. byte b21 = -228;\n" +
+                                    "       3. byte b31 = 0b0101;\n" +
+                                    "       4. byte b4 = 0b101;\n" +
+                                    "       5. byte b5 = 225", answer, false)).addOnSuccessListener(documentReference -> Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show());
+        }
+
 
     }
 
@@ -145,12 +156,7 @@ public class MainActivity extends AppCompatActivity {
             db.collection("topicList").add(topicList.get(j))
                     .addOnSuccessListener(documentReference ->
                             Toast.makeText(MainActivity.this, "Коллекция успешно добавлена в Cloud Firestore!",
-                                    Toast.LENGTH_SHORT).show()).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(MainActivity.this, "Ошибка! Коллекция не добавлена в Cloud Firestore!", Toast.LENGTH_SHORT).show();
-                }
-            });
+                                    Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Ошибка! Коллекция не добавлена в Cloud Firestore!", Toast.LENGTH_SHORT).show());
         }
     }
 

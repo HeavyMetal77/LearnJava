@@ -62,12 +62,18 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = topicList.get(position);
         holder.textViewTopicCategory.setText(topic.getNameTopic());
+        Statistic statisticsById;
+        int quantitySolvedTasks = 0;
+        int numberOfCorrectlySolvedTasks = 0;
+        if (statisticList.size() - 1 >= position) {
+            statisticsById = statisticList.get(position);
+            quantitySolvedTasks = statisticsById.getQuantitySolvedTasks();
+            numberOfCorrectlySolvedTasks = statisticsById.getNumberOfCorrectlySolvedTasks();
 
-        Statistic statisticsById = statisticList.get(position);
-        int quantityTasksInTopic = statisticsById.getQuantityTasksInTopic();
-        int quantitySolvedTasks = statisticsById.getQuantitySolvedTasks();
-        int numberOfCorrectlySolvedTasks = statisticsById.getNumberOfCorrectlySolvedTasks();
+        }
+        int quantityTasksInTopic = topic.getQuantityTasksInTopic();
         int incorrectSolvedTask = quantitySolvedTasks - numberOfCorrectlySolvedTasks;
+
 
         String quantitySolvedTasksStr = getColoredSpanned(String.valueOf(quantitySolvedTasks),
                 String.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorLabelText)));

@@ -22,6 +22,7 @@ import java.util.List;
 
 import ua.tarastom.learnjava.data.MainViewModel;
 import ua.tarastom.learnjava.data.Statistic;
+import ua.tarastom.learnjava.data.Task;
 import ua.tarastom.learnjava.data.Topic;
 import ua.tarastom.learnjava.data.TopicAdapter;
 
@@ -29,9 +30,11 @@ public class ListTopicActivity extends AppCompatActivity {
 
     private TopicAdapter topicAdapter;
     private List<Topic> topicList = new ArrayList<>();
-    private int mode;
+    private List<Task> taskList = new ArrayList<>();
+    private int language;
     private MainViewModel mainViewModel;
     private List<Statistic> statisticList;
+    private String nameCollection = "taskList";
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,39 +74,30 @@ public class ListTopicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_topic);
-
         if (mainViewModel == null) {
             mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
         }
-//ListTopicActivity використовується в навчальному та тренувальному режимах
-        //визначаємо в який режим здійснено вхід
-//        Intent intent = getIntent();
-//        if (intent.hasExtra("mode")) {
-//            mode = intent.getIntExtra("mode", 0);
-//        }
-
         //отримую з БД Cloud Firestore інформацію про назви тем і кількість завдань в кожній темі
         //і завантажую в RecyclerView
-        getDataFromCloudDB("topicList");
+        getDataFromCloudDB(nameCollection);
     }
 
     private void loadRecyclerView() {
         RecyclerView recyclerViewTopic = findViewById(R.id.recyclerViewTopic);
         topicAdapter = new TopicAdapter();
         recyclerViewTopic.setLayoutManager(new LinearLayoutManager(this));
-        Collections.sort(topicList, (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
+        if (topicList.size() > 1) {
+            Collections.sort(topicList, (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
+        }
         topicAdapter.setTopicList(topicList);
         topicAdapter.setStatisticList(statisticList);
         recyclerViewTopic.setAdapter(topicAdapter);
         topicAdapter.setOnTopicClickListener(position -> {
-            Intent intent;
-//            if (mode == 2) {
-//            intent = new Intent(ListTopicActivity.this, TestActivity.class);
-//            } else {
-            intent = new Intent(ListTopicActivity.this, TaskActivity.class);
-//            }
+            Intent intent = new Intent(ListTopicActivity.this, TaskActivity.class);
             Topic topic = topicAdapter.getTopicList().get(position);
-            intent.putExtra("position", topic.getId());
+            intent.putExtra("nameTopic", topic.getNameTopic());
+            intent.putExtra("idTopic", topic.getId());
+            intent.putExtra("quantityTasksInTopic", topic.getQuantityTasksInTopic());
             startActivity(intent);
         });
     }
@@ -146,7 +140,20 @@ public class ListTopicActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection(nameCollection).addSnapshotListener((value, error) -> {
                 if (value != null) {
-                    topicList = value.toObjects(Topic.class);
+                    taskList = value.toObjects(Task.class);
+                }
+                for (Task task : taskList) {
+                    //для кожного завдання перевіряю чи містить таку назву теми
+                    Topic newTopic = new Topic(task.getIdTopic(), task.getTopic().get(language), 0);
+                    Topic topic;
+                    if (!topicList.contains(newTopic)) {
+                        //якщо ні - добавляю нову тему
+                        newTopic.setQuantityTasksInTopic(newTopic.getQuantityTasksInTopic() + 1);
+                        topicList.add(newTopic);
+                    } else {
+                        Topic topic1 = topicList.get(task.getIdTopic());
+                        topic1.setQuantityTasksInTopic(topic1.getQuantityTasksInTopic() + 1);
+                    }
                 }
                 setStatisticsList(); //створюю нову або дістаю з БД SQLite дані статистики
                 loadRecyclerView(); //встановлюю елементи інтерфейсу
