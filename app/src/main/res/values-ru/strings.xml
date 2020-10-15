@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Узучай Java</string>
+    <string name="result">Результат:</string>
+    <string name="question">Вопрос:</string>
+    <string name="answer_options">Варианты ответов:</string>
+    <string name="checkbox1">CheckBox1</string>
+    <string name="checkbox2">CheckBox2</string>
+    <string name="checkbox3">CheckBox3</string>
+    <string name="checkbox4">CheckBox4</string>
+    <string name="checkbox5">CheckBox5</string>
+    <string name="checkbox6">CheckBox6</string>
+    <string name="checkbox7">CheckBox7</string>
+    <string name="submit">Проверить</string>
+    <string name="arrow_back">Стрелка назад</string>
+    <string name="topic_label">\Тема: </string>
+    <string name="task_label">\Задание: </string>
+    <string name="right_answer">Правильный ответ</string>
+    <string name="item_main">Главная</string>
+    <string name="item_topics">Список тем</string>
+    <string name="item_statistics">Статистика</string>
+<!--    <string name="title_activity_login">LoginActivity</string>-->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Войти</string>
+    <string name="action_sign_in_short">Войти</string>
+<!--    <string name="welcome">"Welcome !"</string>-->
+<!--    <string name="invalid_username">Not a valid username</string>-->
+<!--    <string name="invalid_password">Password must be >5 characters</string>-->
+    <string name="login_failed">"Ошибка! Вход не выполнен!"</string>
+    <string name="hint_email">Введите Ваш email</string>
+    <string name="hint_password">Введите Ваш пароль</string>
+    <string name="text_register_button">Зарегистрироваться</string>
+    <string name="text_i_have_an_account">У меня уже есть аккаунт</string>
+    <string name="registration">Регистрация</string>
+    <string name="label_button_training_mode">Режим обучения</string>
+    <string name="label_button_test_mode">Режим тестирования</string>
+    <string name="label_button_statistics">Статистика</string>
+    <string name="item_exit_account">Выход</string>
+    <string name="label_stat">Результаты решения задач:</string>
+    <string name="button_clear">Очистить</string>
+    <string name="label_button_go_main">Перейти к решению задач</string>
+    <string name="sign_out">Выйти из аккаунта</string>
+    <string name="user_s_photo">фото пользователя</string>
+    <string name="toast_solve_this_problem_first">Сначала решите это задание!</string>
+
+</resources>

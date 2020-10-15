@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ua.tarastom.learnjava.R;
 
@@ -19,10 +20,30 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     private List<Topic> topicList;
     private OnTopicClickListener onTopicClickListener;
     private List<Statistic> statisticList;
+    private int language;
 
     public TopicAdapter() {
         topicList = new ArrayList<>();
         statisticList = new ArrayList<>();
+        setLanguage();
+    }
+
+    private void setLanguage() {
+        //локалізація питань
+        String displayLanguage = Locale.getDefault().getDisplayLanguage();
+        switch (displayLanguage) {
+            case "русский":
+                language = 0;
+                break;
+            case "English":
+                language = 1;
+                break;
+            case "українська":
+                language = 2;
+                break;
+            default:
+                language = 1;
+        }
     }
 
     public List<Topic> getTopicList() {
@@ -60,7 +81,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     @Override
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = topicList.get(position);
-        holder.textViewTopicCategory.setText(topic.getNameTopic());
+        holder.textViewTopicCategory.setText(topic.getNameTopic().get(language));
         Statistic statisticsById = null;
         int quantitySolvedTasks = 0;
         int numberOfCorrectlySolvedTasks = 0;
@@ -81,7 +102,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
 
         holder.textViewQuantityTasksInTopic.setText(String.valueOf(quantityTasksInTopic));
         holder.textViewSolvedProblem
-                .setText(Html.fromHtml(quantitySolvedTasksStr + "/ " + numberOfCorrectlySolvedTasksStr + "/ " + incorrectSolvedTaskStr));
+                .setText(Html.fromHtml(quantitySolvedTasksStr + "/" + numberOfCorrectlySolvedTasksStr + "/" + incorrectSolvedTaskStr));
 
         //змінюю колір фону item при завершенні опрацювання всіх завдань
         if (statisticsById != null && topic.getQuantityTasksInTopic() == statisticsById.getQuantitySolvedTasks()) {

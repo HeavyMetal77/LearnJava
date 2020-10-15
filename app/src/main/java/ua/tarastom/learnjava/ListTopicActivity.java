@@ -110,7 +110,7 @@ public class ListTopicActivity extends AppCompatActivity {
         topicAdapter.setOnTopicClickListener(position -> {
             Intent intent = new Intent(ListTopicActivity.this, TaskActivity.class);
             Topic topic = topicAdapter.getTopicList().get(position);
-            intent.putExtra("nameTopic", topic.getNameTopic());
+            intent.putExtra("nameTopic", topic.getNameTopic().get(language));
             intent.putExtra("idTopic", topic.getId());
             intent.putExtra("quantityTasksInTopic", topic.getQuantityTasksInTopic());
             startActivity(intent);
@@ -159,7 +159,7 @@ public class ListTopicActivity extends AppCompatActivity {
                 }
                 for (Task task : taskList) {
                     //для кожного завдання перевіряю чи містить таку назву теми
-                    Topic newTopic = new Topic(task.getIdTopic(), task.getTopic().get(language), 0);
+                    Topic newTopic = new Topic(task.getIdTopic(), task.getTopic(), 0);
                     if (!topicList.contains(newTopic)) {
                         //якщо ні - добавляю нову тему
                         newTopic.setQuantityTasksInTopic(newTopic.getQuantityTasksInTopic() + 1);

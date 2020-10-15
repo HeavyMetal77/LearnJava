@@ -111,7 +111,13 @@ public class TaskActivity extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList = queryDocumentSnapshots.toObjects(Task.class);
                     //отримуємо номер останнього вирішеного завдання з SQLite Statistic
-                    currentStatisticTask = mainViewModel.getStatisticByNameTopic(nameTopic);
+                    List<Statistic> allStatistics = mainViewModel.getAllStatistics();
+                    for (Statistic statistic : allStatistics) {
+                        if (statistic.getNameTopic().get(language).equals(nameTopic)) {
+                            currentStatisticTask = statistic;
+                        }
+                    }
+
                     if (currentStatisticTask != null) {
                         int quantitySolvedTasks = currentStatisticTask.getQuantitySolvedTasks();
                         if (quantitySolvedTasks > taskId) {
@@ -119,7 +125,7 @@ public class TaskActivity extends AppCompatActivity {
                         }
                     } else {
                         Task task = taskList.get(taskId);
-                        currentStatisticTask = new Statistic(task.getIdTopic(), task.getTopic().get(language),
+                        currentStatisticTask = new Statistic(task.getIdTopic(), task.getTopic(),
                                 quantityTasksInTopic, 0, 0);
                         mainViewModel.insertStatistic(currentStatisticTask);
                     }
@@ -265,7 +271,7 @@ public class TaskActivity extends AppCompatActivity {
         //заборонено перехід до наступного завдання поки не виконано поточне
         boolean resolved = taskList.get(taskId).isResolved();
         if (!resolved) {
-            Toast.makeText(this, "Спочатку вирішіть це завдання!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.toast_solve_this_problem_first, Toast.LENGTH_SHORT).show();
             return;
         }
         //переходимо до наступного завдання
@@ -313,7 +319,7 @@ public class TaskActivity extends AppCompatActivity {
 
             if (choiceRightAnswer) {
                 showRightAnswer();
-                Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
                 //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
                 if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size() - 1 < idTask) {
                     task.setResolved(true); //встановити флаг чи вирішена задача
@@ -342,7 +348,7 @@ public class TaskActivity extends AppCompatActivity {
                     currentStatisticTask.getListOfIncorrectlySolvedProblems().add(0);//встановити флаг - вирішена задача неправильно
                     currentStatisticTask.setQuantitySolvedTasks(currentStatisticTask.getQuantitySolvedTasks() + 1);
                 }
-                Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Не правильно!", Toast.LENGTH_SHORT).show();
                 buttonShowRightAnswer.setVisibility(View.VISIBLE); //показати кнопку правильної відповіді
                 //загальний фон змінюється на світло-червоний
                 scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorBackgroundIncorrectly));

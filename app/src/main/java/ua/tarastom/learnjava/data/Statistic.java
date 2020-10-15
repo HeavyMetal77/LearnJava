@@ -11,7 +11,7 @@ import java.util.List;
 public class Statistic {
     @PrimaryKey
     private int id;
-    private String nameTopic; //назва теми
+    private List<String> nameTopic; //назва теми
     private int quantityTasksInTopic; //кількість всіх задач в темі
     private int quantitySolvedTasks; //кількість всіх вирішених задач (правильно і не правильно)
     private int numberOfCorrectlySolvedTasks; //кількість правильно вирішених задач
@@ -20,7 +20,7 @@ public class Statistic {
     public Statistic() {
     }
 
-    public Statistic(int id, String nameTopic, int quantityTasksInTopic, int quantitySolvedTasks, int numberOfCorrectlySolvedTasks) {
+    public Statistic(int id, List<String> nameTopic, int quantityTasksInTopic, int quantitySolvedTasks, int numberOfCorrectlySolvedTasks) {
         this.id = id;
         this.nameTopic = nameTopic;
         this.quantityTasksInTopic = quantityTasksInTopic;
@@ -29,7 +29,7 @@ public class Statistic {
     }
 
     @Ignore
-    public Statistic(int id, String nameTopic, int quantityTasksInTopic) {
+    public Statistic(int id, List<String> nameTopic, int quantityTasksInTopic) {
         this.id = id;
         this.nameTopic = nameTopic;
         this.quantityTasksInTopic = quantityTasksInTopic;
@@ -43,11 +43,11 @@ public class Statistic {
         this.id = id;
     }
 
-    public String getNameTopic() {
+    public List<String> getNameTopic() {
         return nameTopic;
     }
 
-    public void setNameTopic(String nameTopic) {
+    public void setNameTopic(List<String> nameTopic) {
         this.nameTopic = nameTopic;
     }
 

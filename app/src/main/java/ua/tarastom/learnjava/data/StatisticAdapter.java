@@ -13,16 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ua.tarastom.learnjava.R;
 
 public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.StatisticViewHolder> {
-    private List<String> statisticResult;
+    private List<List<String>> statisticResult;
     private List<Statistic> allStatistics;
     private MainViewModel mainViewModel;
+    private int language;
 
     public StatisticAdapter(MainViewModel mainViewModel) {
         this.mainViewModel = mainViewModel;
+        setLanguage();
     }
 
     public List<Statistic> getStatisticResult() {
@@ -40,6 +43,24 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
         notifyDataSetChanged();
     }
 
+    private void setLanguage() {
+        //локалізація питань
+        String displayLanguage = Locale.getDefault().getDisplayLanguage();
+        switch (displayLanguage) {
+            case "русский":
+                language = 0;
+                break;
+            case "English":
+                language = 1;
+                break;
+            case "українська":
+                language = 2;
+                break;
+            default:
+                language = 1;
+        }
+    }
+
     @NonNull
     @Override
     public StatisticViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,14 +70,20 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
 
     @Override
     public void onBindViewHolder(@NonNull StatisticViewHolder holder, int position) {
-        String nameTopic = statisticResult.get(position);
+        List<String> nameTopic = statisticResult.get(position);
         if (statisticResult.size() > 0) {
-            holder.textResultStat.setText(nameTopic);
+            holder.textResultStat.setText(nameTopic.get(language));
         }
-        Statistic statisticsById = mainViewModel.getStatisticByNameTopic(nameTopic);
-        int quantityTasksInTopic = statisticsById.getQuantityTasksInTopic();
-        int quantitySolvedTasks = statisticsById.getQuantitySolvedTasks();
-        int numberOfCorrectlySolvedTasks = statisticsById.getNumberOfCorrectlySolvedTasks();
+        Statistic temp = new Statistic();
+        for (Statistic statistic : allStatistics) {
+            if (statistic.getNameTopic().equals(nameTopic)) {
+                temp = statistic;
+            }
+        }
+        final Statistic statisticByNameTopic = temp;
+        int quantityTasksInTopic = statisticByNameTopic.getQuantityTasksInTopic();
+        int quantitySolvedTasks = statisticByNameTopic.getQuantitySolvedTasks();
+        int numberOfCorrectlySolvedTasks = statisticByNameTopic.getNumberOfCorrectlySolvedTasks();
         int incorrectSolvedTask = quantitySolvedTasks - numberOfCorrectlySolvedTasks;
 
         String quantityTasksInTopicStr = getColoredSpanned(String.valueOf(quantityTasksInTopic),
@@ -70,15 +97,17 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
                 .setText(Html.fromHtml(quantityTasksInTopicStr + " / " + numberOfCorrectlySolvedTasksStr + " / " + incorrectSolvedTaskStr));
 
         holder.buttonClearTopic.setOnClickListener(view -> {
-            statisticsById.setQuantitySolvedTasks(0);  //обнуляю статистику вирішених задач
-            statisticsById.setNumberOfCorrectlySolvedTasks(0); //обнуляю статистику кількості правильно вирішених задач
-            statisticsById.setListOfIncorrectlySolvedProblems(new ArrayList<>()); //обнуляю статистику правильно-неправильно вирішених задач
-            mainViewModel.insertStatistic(statisticsById);
+            statisticByNameTopic.setQuantitySolvedTasks(0);  //обнуляю статистику вирішених задач
+            statisticByNameTopic.setNumberOfCorrectlySolvedTasks(0); //обнуляю статистику кількості правильно вирішених задач
+            statisticByNameTopic.setListOfIncorrectlySolvedProblems(new ArrayList<>()); //обнуляю статистику правильно-неправильно вирішених задач
+            mainViewModel.insertStatistic(statisticByNameTopic);
             setStatisticResult(mainViewModel.getAllStatistics());
         });
         //змінюю колір фону item при завершенні опрацювання всіх завдань
-        if (statisticsById.getQuantityTasksInTopic() == statisticsById.getQuantitySolvedTasks()) {
+        if (statisticByNameTopic.getQuantityTasksInTopic() == statisticByNameTopic.getQuantitySolvedTasks()) {
             holder.itemView.setBackgroundResource(R.drawable.style_item_topic_finished);
+        } else {
+            holder.itemView.setBackgroundResource(R.drawable.style_item_topic_in_process);
         }
     }
 
@@ -98,7 +127,7 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
 
         public StatisticViewHolder(@NonNull View itemView) {
             super(itemView);
-            textResultStat = itemView.findViewById(R.id.editTextResultStat);
+            textResultStat = itemView.findViewById(R.id.textResultStat);
             buttonClearTopic = itemView.findViewById(R.id.buttonClearTopic);
             textViewStat = itemView.findViewById(R.id.textViewStat);
             itemView.setOnClickListener(view -> {

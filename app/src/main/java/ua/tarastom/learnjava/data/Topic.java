@@ -1,10 +1,11 @@
 package ua.tarastom.learnjava.data;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Topic {
     private int id; //порядковий номер необхідний для сортування тем, починається з 0
-    private String nameTopic;
+    private List<String> nameTopic;
     private int quantityTasksInTopic;
 
     //конструктор без параметрів обов'язковий
@@ -17,13 +18,13 @@ public class Topic {
         this.quantityTasksInTopic = topic.quantityTasksInTopic;
     }
 
-    public Topic(int id, String nameTopic, int quantityTasksInTopic) {
+    public Topic(int id, List<String> nameTopic, int quantityTasksInTopic) {
         this.id = id;
         this.nameTopic = nameTopic;
         this.quantityTasksInTopic = quantityTasksInTopic;
     }
 
-    public Topic(String nameTopic) {
+    public Topic(List<String> nameTopic) {
         this.nameTopic = nameTopic;
     }
 
@@ -35,11 +36,11 @@ public class Topic {
         this.id = id;
     }
 
-    public String getNameTopic() {
+    public List<String> getNameTopic() {
         return nameTopic;
     }
 
-    public void setNameTopic(String nameTopic) {
+    public void setNameTopic(List<String> nameTopic) {
         this.nameTopic = nameTopic;
     }
 

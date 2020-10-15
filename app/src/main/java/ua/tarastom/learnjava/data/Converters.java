@@ -1,9 +1,14 @@
 package ua.tarastom.learnjava.data;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 import androidx.room.TypeConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Converters {
 
@@ -19,7 +24,6 @@ public class Converters {
         } else {
             return null;
         }
-
     }
 
     @TypeConverter
@@ -34,6 +38,17 @@ public class Converters {
         } else {
             return null;
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @TypeConverter
+    public String fromArrayList(List<String> allAnswersList) {
+        return allAnswersList.stream().collect(Collectors.joining("-"));
+    }
+
+    @TypeConverter
+    public List<String> fromString(String data) {
+        return Arrays.asList(data.split("-"));
     }
 
 }
