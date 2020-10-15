@@ -76,6 +76,10 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
             mainViewModel.insertStatistic(statisticsById);
             setStatisticResult(mainViewModel.getAllStatistics());
         });
+        //змінюю колір фону item при завершенні опрацювання всіх завдань
+        if (statisticsById.getQuantityTasksInTopic() == statisticsById.getQuantitySolvedTasks()) {
+            holder.itemView.setBackgroundResource(R.drawable.style_item_topic_finished);
+        }
     }
 
     private String getColoredSpanned(String text, String color) {

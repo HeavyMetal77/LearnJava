@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ public class TaskActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private Statistic currentStatisticTask;
     private ScrollView scrollViewTaskActivity;
-    private int language = 0;
+    private int language;
     private String nameCollection = "taskList";
 
     @Override
@@ -71,10 +72,30 @@ public class TaskActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void setLanguage() {
+        //локалізація питань
+        String displayLanguage = Locale.getDefault().getDisplayLanguage();
+        switch (displayLanguage) {
+            case "русский":
+                language = 0;
+                break;
+            case "English":
+                language = 1;
+                break;
+            case "українська":
+                language = 2;
+                break;
+            default:
+                language = 1;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
+        setLanguage();
+
         if (mainViewModel == null) {
             mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
         }
@@ -98,9 +119,8 @@ public class TaskActivity extends AppCompatActivity {
                         }
                     } else {
                         Task task = taskList.get(taskId);
-                        currentStatisticTask = new Statistic(task.getIdTopic(), task.getTopic().get(language), quantityTasksInTopic);
-                        currentStatisticTask.setQuantitySolvedTasks(0);
-                        currentStatisticTask.setNumberOfCorrectlySolvedTasks(0);
+                        currentStatisticTask = new Statistic(task.getIdTopic(), task.getTopic().get(language),
+                                quantityTasksInTopic, 0, 0);
                         mainViewModel.insertStatistic(currentStatisticTask);
                     }
                     generateNextTask(taskId);

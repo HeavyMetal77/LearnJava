@@ -17,11 +17,6 @@ public class Topic {
         this.quantityTasksInTopic = topic.quantityTasksInTopic;
     }
 
-//    public Topic(String nameTopic, int quantityTasksInTopic) {
-//        this.nameTopic = nameTopic;
-//        this.quantityTasksInTopic = quantityTasksInTopic;
-//    }
-
     public Topic(int id, String nameTopic, int quantityTasksInTopic) {
         this.id = id;
         this.nameTopic = nameTopic;

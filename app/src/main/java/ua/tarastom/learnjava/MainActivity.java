@@ -53,10 +53,13 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < 10; i++) {
             List<String> topic = new ArrayList<>();
-            topic.add("Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль");
+            topic.add("Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль.");
+            topic.add("Java syntax. Data types, variables, number systems, data output to the console.");
+            topic.add("Синтаксис Java. Типи даних, змінні, системи числення, вивід даних в консоль.");
             List<String> question = new ArrayList<>();
-            question.add("Какие из следующих идентификаторов являются действительными идентификаторами Java? (Выберите все, что подходит)");
-            question.add("Which of the following are valid Java identifiers? (Choose all that apply)");
+            question.add("Какие из следующих идентификаторов являются действительными идентификаторами Java? \n(Выберите все правильные ответы)");
+            question.add("Which of the following are valid Java identifiers? \n(Choose all that apply)");
+            question.add("Які з вказаних ідентифікаторів являються дійсними ідентифікаторами Java? \n(Виберіть всі правильні відповіді)");
 
             Map<String, Boolean> answer = new LinkedHashMap<>();
             answer.put("1", false);
@@ -78,9 +81,12 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 10; i++) {
             List<String> topic = new ArrayList<>();
             topic.add("Арифметические и логические операции, операции сравнения и присваивания.");
+            topic.add("Arithmetic and logical operations, comparison and assignment operations.");
+            topic.add("Арифметичні та логічні операції, операції порівняння та присвоювання.");
             List<String> question = new ArrayList<>();
-            question.add("Какие ?");
-            question.add("Which ? (Choose all that apply)");
+            question.add("Какие ? \n(Выберите все правильные ответы)");
+            question.add("Which ? \n(Choose all that apply)");
+            question.add("Які ? \n(Виберіть всі правильні відповіді)");
 
             Map<String, Boolean> answer = new LinkedHashMap<>();
             answer.put("1", false);

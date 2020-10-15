@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import ua.tarastom.learnjava.data.MainViewModel;
 import ua.tarastom.learnjava.data.Statistic;
@@ -58,15 +59,21 @@ public class ListTopicActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+    private void setLanguage() {
+        //локалізація списку тем
+        String displayLanguage = Locale.getDefault().getDisplayLanguage();
+        switch (displayLanguage) {
+            case "русский":
+                language = 0;
+                break;
+            case "English":
+                language = 1;
+                break;
+            case "українська":
+                language = 2;
+                break;
+            default:
+                language = 1;
         }
     }
 
@@ -74,12 +81,20 @@ public class ListTopicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_topic);
-        if (mainViewModel == null) {
+       setLanguage();
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            //отримую з БД Cloud Firestore інформацію про назви тем і кількість завдань в кожній темі
+            //і завантажую в RecyclerView
             mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
+            getDataFromCloudDB(nameCollection);
         }
-        //отримую з БД Cloud Firestore інформацію про назви тем і кількість завдань в кожній темі
-        //і завантажую в RecyclerView
-        getDataFromCloudDB(nameCollection);
     }
 
     private void loadRecyclerView() {
@@ -145,14 +160,14 @@ public class ListTopicActivity extends AppCompatActivity {
                 for (Task task : taskList) {
                     //для кожного завдання перевіряю чи містить таку назву теми
                     Topic newTopic = new Topic(task.getIdTopic(), task.getTopic().get(language), 0);
-                    Topic topic;
                     if (!topicList.contains(newTopic)) {
                         //якщо ні - добавляю нову тему
                         newTopic.setQuantityTasksInTopic(newTopic.getQuantityTasksInTopic() + 1);
                         topicList.add(newTopic);
                     } else {
-                        Topic topic1 = topicList.get(task.getIdTopic());
-                        topic1.setQuantityTasksInTopic(topic1.getQuantityTasksInTopic() + 1);
+                        int i = topicList.indexOf(newTopic);
+                        Topic topic = topicList.get(i);
+                        topic.setQuantityTasksInTopic(topic.getQuantityTasksInTopic() + 1);
                     }
                 }
                 setStatisticsList(); //створюю нову або дістаю з БД SQLite дані статистики

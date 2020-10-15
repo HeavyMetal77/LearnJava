@@ -16,7 +16,6 @@ import java.util.List;
 import ua.tarastom.learnjava.R;
 
 public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHolder> {
-
     private List<Topic> topicList;
     private OnTopicClickListener onTopicClickListener;
     private List<Statistic> statisticList;
@@ -62,18 +61,16 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     public void onBindViewHolder(@NonNull TopicViewHolder holder, int position) {
         Topic topic = topicList.get(position);
         holder.textViewTopicCategory.setText(topic.getNameTopic());
-        Statistic statisticsById;
+        Statistic statisticsById = null;
         int quantitySolvedTasks = 0;
         int numberOfCorrectlySolvedTasks = 0;
         if (statisticList.size() - 1 >= position) {
             statisticsById = statisticList.get(position);
             quantitySolvedTasks = statisticsById.getQuantitySolvedTasks();
             numberOfCorrectlySolvedTasks = statisticsById.getNumberOfCorrectlySolvedTasks();
-
         }
         int quantityTasksInTopic = topic.getQuantityTasksInTopic();
         int incorrectSolvedTask = quantitySolvedTasks - numberOfCorrectlySolvedTasks;
-
 
         String quantitySolvedTasksStr = getColoredSpanned(String.valueOf(quantitySolvedTasks),
                 String.valueOf(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorLabelText)));
@@ -85,6 +82,11 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
         holder.textViewQuantityTasksInTopic.setText(String.valueOf(quantityTasksInTopic));
         holder.textViewSolvedProblem
                 .setText(Html.fromHtml(quantitySolvedTasksStr + "/ " + numberOfCorrectlySolvedTasksStr + "/ " + incorrectSolvedTaskStr));
+
+        //змінюю колір фону item при завершенні опрацювання всіх завдань
+        if (statisticsById != null && topic.getQuantityTasksInTopic() == statisticsById.getQuantitySolvedTasks()) {
+            holder.itemView.setBackgroundResource(R.drawable.style_item_topic_finished);
+        }
     }
 
     private String getColoredSpanned(String text, String color) {

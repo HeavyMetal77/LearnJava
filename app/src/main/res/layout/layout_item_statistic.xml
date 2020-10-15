@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
+    android:layout_margin="8dp"
     android:background="@drawable/style_item_recyclerview"
     >
 

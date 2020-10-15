@@ -20,6 +20,14 @@ public class Statistic {
     public Statistic() {
     }
 
+    public Statistic(int id, String nameTopic, int quantityTasksInTopic, int quantitySolvedTasks, int numberOfCorrectlySolvedTasks) {
+        this.id = id;
+        this.nameTopic = nameTopic;
+        this.quantityTasksInTopic = quantityTasksInTopic;
+        this.quantitySolvedTasks = quantitySolvedTasks;
+        this.numberOfCorrectlySolvedTasks = numberOfCorrectlySolvedTasks;
+    }
+
     @Ignore
     public Statistic(int id, String nameTopic, int quantityTasksInTopic) {
         this.id = id;
