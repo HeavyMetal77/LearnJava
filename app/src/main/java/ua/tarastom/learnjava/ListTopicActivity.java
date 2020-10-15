@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +38,8 @@ public class ListTopicActivity extends AppCompatActivity {
     private MainViewModel mainViewModel;
     private List<Statistic> statisticList;
     private String nameCollection = "taskList";
+    private ProgressBar progressBarTopicActivity;
+    private RecyclerView recyclerViewTopic;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,7 +85,12 @@ public class ListTopicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_topic);
-       setLanguage();
+        progressBarTopicActivity = findViewById(R.id.progressBarTopicActivity);
+        progressBarTopicActivity.setVisibility(View.VISIBLE);
+        recyclerViewTopic = findViewById(R.id.recyclerViewTopic);
+        recyclerViewTopic.setVisibility(View.GONE);
+
+        setLanguage();
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -172,6 +181,8 @@ public class ListTopicActivity extends AppCompatActivity {
                 }
                 setStatisticsList(); //створюю нову або дістаю з БД SQLite дані статистики
                 loadRecyclerView(); //встановлюю елементи інтерфейсу
+                progressBarTopicActivity.setVisibility(View.GONE);
+                recyclerViewTopic.setVisibility(View.VISIBLE);
             });
         }
     }

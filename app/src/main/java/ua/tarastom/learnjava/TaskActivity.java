@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,8 @@ public class TaskActivity extends AppCompatActivity {
     private ScrollView scrollViewTaskActivity;
     private int language;
     private String nameCollection = "taskList";
+    private ConstraintLayout constraintLayout;
+    private ProgressBar progressBarTaskActivity;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,15 +93,50 @@ public class TaskActivity extends AppCompatActivity {
         }
     }
 
+    private void initView() {
+        if (mainViewModel == null) {
+            mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
+        }
+        imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
+        imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
+        imageViewArrowBack.setVisibility(View.INVISIBLE);
+        textViewTopic = findViewById(R.id.textViewLabelTopic);
+        textViewLabelTask = findViewById(R.id.textViewLabelTask);
+        textLabelResultTask = findViewById(R.id.textLabelResultTask);
+        textViewQuestion = findViewById(R.id.textViewLabelQuestion);
+        textViewTextMultiLine = findViewById(R.id.textViewTextMultiLine);
+        CheckBox checkBox1 = findViewById(R.id.checkBox1);
+        CheckBox checkBox2 = findViewById(R.id.checkBox2);
+        CheckBox checkBox3 = findViewById(R.id.checkBox3);
+        CheckBox checkBox4 = findViewById(R.id.checkBox4);
+        CheckBox checkBox5 = findViewById(R.id.checkBox5);
+        CheckBox checkBox6 = findViewById(R.id.checkBox6);
+        CheckBox checkBox7 = findViewById(R.id.checkBox7);
+        checkBoxList = new ArrayList<>();
+        checkBoxList.add(checkBox1);
+        checkBoxList.add(checkBox2);
+        checkBoxList.add(checkBox3);
+        checkBoxList.add(checkBox4);
+        checkBoxList.add(checkBox5);
+        checkBoxList.add(checkBox6);
+        checkBoxList.add(checkBox7);
+        buttonShowRightAnswer = findViewById(R.id.buttonShowRightAnswer);
+        buttonCheckAnswer = findViewById(R.id.button_check_answer);
+        scrollViewTaskActivity = findViewById(R.id.scrollViewTaskActivity);
+        constraintLayout = findViewById(R.id.layoutActivityTask);
+        progressBarTaskActivity = findViewById(R.id.progressBarTaskActivity);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
-        setLanguage();
 
-        if (mainViewModel == null) {
-            mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
-        }
+        setLanguage();
+        initView();
+        constraintLayout.setVisibility(View.GONE);
+        progressBarTaskActivity.setVisibility(View.VISIBLE);
+
         Intent intent = getIntent();
         int idTopic = intent.getIntExtra("idTopic", -1);
         String nameTopic = intent.getStringExtra("nameTopic");
@@ -130,38 +168,13 @@ public class TaskActivity extends AppCompatActivity {
                         mainViewModel.insertStatistic(currentStatisticTask);
                     }
                     generateNextTask(taskId);
+                    constraintLayout.setVisibility(View.VISIBLE);
+                    progressBarTaskActivity.setVisibility(View.GONE);
                 }).addOnFailureListener(e -> startActivity(new Intent(getApplicationContext(), ListTopicActivity.class)));
-
-        imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
-        imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
-        imageViewArrowBack.setVisibility(View.INVISIBLE);
-        textViewTopic = findViewById(R.id.textViewLabelTopic);
-        textViewLabelTask = findViewById(R.id.textViewLabelTask);
-        textLabelResultTask = findViewById(R.id.textLabelResultTask);
-        textViewQuestion = findViewById(R.id.textViewLabelQuestion);
-        textViewTextMultiLine = findViewById(R.id.textViewTextMultiLine);
-        CheckBox checkBox1 = findViewById(R.id.checkBox1);
-        CheckBox checkBox2 = findViewById(R.id.checkBox2);
-        CheckBox checkBox3 = findViewById(R.id.checkBox3);
-        CheckBox checkBox4 = findViewById(R.id.checkBox4);
-        CheckBox checkBox5 = findViewById(R.id.checkBox5);
-        CheckBox checkBox6 = findViewById(R.id.checkBox6);
-        CheckBox checkBox7 = findViewById(R.id.checkBox7);
-        checkBoxList = new ArrayList<>();
-        checkBoxList.add(checkBox1);
-        checkBoxList.add(checkBox2);
-        checkBoxList.add(checkBox3);
-        checkBoxList.add(checkBox4);
-        checkBoxList.add(checkBox5);
-        checkBoxList.add(checkBox6);
-        checkBoxList.add(checkBox7);
-        buttonShowRightAnswer = findViewById(R.id.buttonShowRightAnswer);
-        buttonCheckAnswer = findViewById(R.id.button_check_answer);
-        scrollViewTaskActivity = findViewById(R.id.scrollViewTaskActivity);
     }
 
     //генерація наступного завдання
-    public void generateNextTask(int idTask) {
+    private void generateNextTask(int idTask) {
         //загальний фон встановлюю на білий
         scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorWhite));
         //якщо завдань в темі більше не має встановлюю idTask на останнє
@@ -358,7 +371,7 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     //метод для показу правильності відповіді
-    public void showRightAnswer() {
+    private void showRightAnswer() {
         //якщо завдань в темі більше не має встановлюю idTask на останнє
         if (taskId >= taskList.size()) {
             taskId = taskList.size() - 1;
@@ -405,6 +418,7 @@ public class TaskActivity extends AppCompatActivity {
     public void showRightAnswer(View view) {
         showRightAnswer();
     }
+
 
     //метод онклік для зміни фону вибраного чекбокса
     public void onClickCheckBox(View view) {
