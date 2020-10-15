@@ -32,7 +32,7 @@ import ua.tarastom.learnjava.data.TopicAdapter;
 public class ListTopicActivity extends AppCompatActivity {
 
     private TopicAdapter topicAdapter;
-    private List<Topic> topicList = new ArrayList<>();
+    private List<Topic> topicList;
     private List<Task> taskList = new ArrayList<>();
     private int language;
     private MainViewModel mainViewModel;
@@ -126,7 +126,7 @@ public class ListTopicActivity extends AppCompatActivity {
         });
     }
 
-    //створюю нову або дістаю з БД SQLite дані статистики
+    //створюю нову або дістаю з БД SQLite дані статистики, оновлюю їх
     private void setStatisticsList() {
         statisticList = mainViewModel.getAllStatistics();
         if (statisticList == null || statisticList.size() == 0) {
@@ -136,6 +136,16 @@ public class ListTopicActivity extends AppCompatActivity {
                 Statistic statistic = new Statistic(topic.getId(), topic.getNameTopic(), topic.getQuantityTasksInTopic());
                 statisticList.add(statistic);
                 mainViewModel.insertStatistic(statistic);
+            }
+        } else {
+            //у випадку оновлення БД, синхронізую загальну кількість завдань в Statistic з topicList
+            for (Statistic statistic : statisticList) {
+                for (Topic topic : topicList) {
+                    if (topic.getNameTopic().equals(statistic.getNameTopic())) {
+                        statistic.setQuantityTasksInTopic(topic.getQuantityTasksInTopic());
+                        mainViewModel.insertStatistic(statistic);
+                    }
+                }
             }
         }
     }
@@ -166,6 +176,7 @@ public class ListTopicActivity extends AppCompatActivity {
                 if (value != null) {
                     taskList = value.toObjects(Task.class);
                 }
+                topicList = new ArrayList<>(); //необхідний для правильного онлайн оновлення БД
                 for (Task task : taskList) {
                     //для кожного завдання перевіряю чи містить таку назву теми
                     Topic newTopic = new Topic(task.getIdTopic(), task.getTopic(), 0);
