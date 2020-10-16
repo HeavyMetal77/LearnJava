@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import ua.tarastom.learnjava.R;
 
@@ -22,28 +21,10 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.TopicViewHol
     private List<Statistic> statisticList;
     private int language;
 
-    public TopicAdapter() {
+    public TopicAdapter(int language) {
+        this.language = language;
         topicList = new ArrayList<>();
         statisticList = new ArrayList<>();
-        setLanguage();
-    }
-
-    private void setLanguage() {
-        //локалізація питань
-        String displayLanguage = Locale.getDefault().getDisplayLanguage();
-        switch (displayLanguage) {
-            case "русский":
-                language = 0;
-                break;
-            case "English":
-                language = 1;
-                break;
-            case "українська":
-                language = 2;
-                break;
-            default:
-                language = 1;
-        }
     }
 
     public List<Topic> getTopicList() {

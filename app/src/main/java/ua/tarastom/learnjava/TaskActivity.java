@@ -1,7 +1,12 @@
 package ua.tarastom.learnjava;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,31 +57,55 @@ public class TaskActivity extends AppCompatActivity {
     private String nameCollection = "taskList";
     private ConstraintLayout constraintLayout;
     private ProgressBar progressBarTaskActivity;
+    public static final String APP_PREFERENCES = "LearnJavaSettings";
+    public static final String APP_PREFERENCES_LANGUAGE = "language";
+    MenuItem itemExitAccount;
+    MenuItem itemStatistics;
+    MenuItem itemLanguage;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+        //локалізую меню
+        itemExitAccount = menu.getItem(0);
+        itemLanguage = menu.getItem(1);
+        itemStatistics = menu.getItem(2);
+        itemExitAccount.setTitle(getResStringLanguage(R.string.item_exit_account, getLanguageAbbreviation(language)));
+        itemStatistics.setTitle(getResStringLanguage(R.string.item_statistics, getLanguageAbbreviation(language)));
+        itemLanguage.setTitle(getResStringLanguage(R.string.item_language, getLanguageAbbreviation(language)));
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.itemStatistics) {
-            Intent intent = new Intent(this, StatisticsActivity.class);
-            startActivity(intent);
-        }
         if (item.getItemId() == R.id.itemExitAccount) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.putExtra("exit", 0);
             startActivity(intent);
             finish();
         }
+        if (item.getItemId() == R.id.itemStatistics) {
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.itemLanguage) {
+            Intent intent = new Intent(this, LanguageActivity.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    private void getLanguagePreferences() {
+        SharedPreferences mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(APP_PREFERENCES_LANGUAGE)) {
+            language = mSettings.getInt(APP_PREFERENCES_LANGUAGE, language);
+        } else {
+            setLanguage();
+        }
+    }
+
     private void setLanguage() {
-        //локалізація питань
         String displayLanguage = Locale.getDefault().getDisplayLanguage();
         switch (displayLanguage) {
             case "русский":
@@ -91,6 +120,43 @@ public class TaskActivity extends AppCompatActivity {
             default:
                 language = 1;
         }
+    }
+
+    private String getLanguageAbbreviation(int language) {
+        String abbr;
+        switch (language) {
+            case 0:
+                abbr = "ru";
+                break;
+            case 1:
+                abbr = "us";
+                break;
+            case 2:
+                abbr = "uk";
+                break;
+            default:
+                abbr = "us";
+        }
+        return abbr;
+    }
+
+    public String getResStringLanguage(int id, String lang) {
+        //Get default locale to back it
+        Resources res = getResources();
+        Configuration conf = res.getConfiguration();
+        Locale savedLocale = conf.locale;
+        //Retrieve resources from desired locale
+        Configuration confAr = getResources().getConfiguration();
+        confAr.locale = new Locale(lang);
+        DisplayMetrics metrics = new DisplayMetrics();
+        Resources resources = new Resources(getAssets(), metrics, confAr);
+        //Get string which you want
+        String string = resources.getString(id);
+        //Restore default locale
+        conf.locale = savedLocale;
+        res.updateConfiguration(conf, null);
+        //return the string that you want
+        return string;
     }
 
     private void initView() {
@@ -128,12 +194,28 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        buttonCheckAnswer.setText(getResStringLanguage(R.string.submit, getLanguageAbbreviation(language)));
+        buttonShowRightAnswer.setText(getResStringLanguage(R.string.right_answer, getLanguageAbbreviation(language)));
+        if (itemExitAccount != null && itemStatistics != null && itemLanguage != null) {
+            itemExitAccount.setTitle(getResStringLanguage(R.string.item_exit_account, getLanguageAbbreviation(language)));
+            itemStatistics.setTitle(getResStringLanguage(R.string.item_statistics, getLanguageAbbreviation(language)));
+            itemLanguage.setTitle(getResStringLanguage(R.string.item_language, getLanguageAbbreviation(language)));
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        setLanguage();
+        getLanguagePreferences();
+
+
         initView();
+        buttonCheckAnswer.setText(getResStringLanguage(R.string.submit, getLanguageAbbreviation(language)));
+        buttonShowRightAnswer.setText(getResStringLanguage(R.string.right_answer, getLanguageAbbreviation(language)));
         constraintLayout.setVisibility(View.GONE);
         progressBarTaskActivity.setVisibility(View.VISIBLE);
 
@@ -172,8 +254,8 @@ public class TaskActivity extends AppCompatActivity {
                     progressBarTaskActivity.setVisibility(View.GONE);
                 }).addOnFailureListener(e -> startActivity(new Intent(getApplicationContext(), ListTopicActivity.class)));
     }
-
     //генерація наступного завдання
+
     private void generateNextTask(int idTask) {
         //загальний фон встановлюю на білий
         scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorWhite));
@@ -233,11 +315,11 @@ public class TaskActivity extends AppCompatActivity {
         }
 
         //встановлюю написи
-        String topic = getResources().getString(R.string.topic_label) + " " + task.getTopic().get(language);
+        String topic = getResStringLanguage(R.string.topic_label, getLanguageAbbreviation(language)) + " " + task.getTopic().get(language);
         textViewTopic.setText(topic);
-        String labelTask = getResources().getString(R.string.task_label) + " " + (idTask + 1);
+        String labelTask = getResStringLanguage(R.string.task_label, getLanguageAbbreviation(language)) + " " + (idTask + 1);
         textViewLabelTask.setText(labelTask);
-        String labelLabelResultTask = getResources().getText(R.string.result).toString() + " "
+        String labelLabelResultTask = getResStringLanguage(R.string.result, getLanguageAbbreviation(language)) + " "
                 + currentStatisticTask.getNumberOfCorrectlySolvedTasks() + " / "
                 + currentStatisticTask.getQuantityTasksInTopic();
         textLabelResultTask.setText(labelLabelResultTask);
@@ -332,7 +414,6 @@ public class TaskActivity extends AppCompatActivity {
 
             if (choiceRightAnswer) {
                 showRightAnswer();
-//                Toast.makeText(this, "Правильно!", Toast.LENGTH_SHORT).show();
                 //якщо задача ще не вирішувалась - збільшую кількість вирішених задач
                 if (!task.isResolved() || currentStatisticTask.getListOfIncorrectlySolvedProblems().size() - 1 < idTask) {
                     task.setResolved(true); //встановити флаг чи вирішена задача
@@ -351,7 +432,7 @@ public class TaskActivity extends AppCompatActivity {
 
                 //загальний фон змінюється на світло-зелений
                 scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorBackgroundCorrectly));
-                String labelLabelResultTask = getResources().getText(R.string.result).toString() + " "
+                String labelLabelResultTask = getResStringLanguage(R.string.result, getLanguageAbbreviation(language)) + " "
                         + currentStatisticTask.getNumberOfCorrectlySolvedTasks() + " / " + currentStatisticTask.getQuantityTasksInTopic();
                 textLabelResultTask.setText(labelLabelResultTask);
                 mainViewModel.insertStatistic(currentStatisticTask);
@@ -418,7 +499,6 @@ public class TaskActivity extends AppCompatActivity {
     public void showRightAnswer(View view) {
         showRightAnswer();
     }
-
 
     //метод онклік для зміни фону вибраного чекбокса
     public void onClickCheckBox(View view) {

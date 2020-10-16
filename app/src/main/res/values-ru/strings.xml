@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Узучай Java</string>
+    <string name="app_name">Learn Java</string>
     <string name="result">Результат:</string>
     <string name="question">Вопрос:</string>
     <string name="answer_options">Варианты ответов:</string>
@@ -18,14 +18,10 @@
     <string name="item_main">Главная</string>
     <string name="item_topics">Список тем</string>
     <string name="item_statistics">Статистика</string>
-<!--    <string name="title_activity_login">LoginActivity</string>-->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Пароль</string>
     <string name="action_sign_in">Войти</string>
     <string name="action_sign_in_short">Войти</string>
-<!--    <string name="welcome">"Welcome !"</string>-->
-<!--    <string name="invalid_username">Not a valid username</string>-->
-<!--    <string name="invalid_password">Password must be >5 characters</string>-->
     <string name="login_failed">"Ошибка! Вход не выполнен!"</string>
     <string name="hint_email">Введите Ваш email</string>
     <string name="hint_password">Введите Ваш пароль</string>
@@ -42,5 +38,10 @@
     <string name="sign_out">Выйти из аккаунта</string>
     <string name="user_s_photo">фото пользователя</string>
     <string name="toast_solve_this_problem_first">Сначала решите это задание!</string>
+    <string name="item_language">Язык</string>
+    <string name="select_application_language">Язык:</string>
+    <string name="radio_button_label_english">English</string>
+    <string name="radio_button_label_russian">русский</string>
+    <string name="radio_button_label_ukraine">українська</string>
 
 </resources>

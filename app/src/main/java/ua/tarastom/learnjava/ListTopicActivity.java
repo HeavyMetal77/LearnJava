@@ -1,7 +1,12 @@
 package ua.tarastom.learnjava;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,25 +45,41 @@ public class ListTopicActivity extends AppCompatActivity {
     private String nameCollection = "taskList";
     private ProgressBar progressBarTopicActivity;
     private RecyclerView recyclerViewTopic;
+    public static final String APP_PREFERENCES = "LearnJavaSettings";
+    public static final String APP_PREFERENCES_LANGUAGE = "language";
+    MenuItem itemExitAccount;
+    MenuItem itemStatistics;
+    MenuItem itemLanguage;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+        //локалізую меню
+        itemExitAccount = menu.getItem(0);
+        itemLanguage = menu.getItem(1);
+        itemStatistics = menu.getItem(2);
+        itemExitAccount.setTitle(getResStringLanguage(R.string.item_exit_account, getLanguageAbbreviation(language)));
+        itemStatistics.setTitle(getResStringLanguage(R.string.item_statistics, getLanguageAbbreviation(language)));
+        itemLanguage.setTitle(getResStringLanguage(R.string.item_language, getLanguageAbbreviation(language)));
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.itemStatistics) {
-            Intent intent = new Intent(this, StatisticsActivity.class);
-            startActivity(intent);
-        }
         if (item.getItemId() == R.id.itemExitAccount) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.putExtra("exit", 0);
             startActivity(intent);
             finish();
+        }
+        if (item.getItemId() == R.id.itemStatistics) {
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.itemLanguage) {
+            Intent intent = new Intent(this, LanguageActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -81,6 +102,68 @@ public class ListTopicActivity extends AppCompatActivity {
         }
     }
 
+    private void getLanguagePreferences() {
+        SharedPreferences mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        if (mSettings.contains(APP_PREFERENCES_LANGUAGE)) {
+            language = mSettings.getInt(APP_PREFERENCES_LANGUAGE, language);
+        } else {
+            setLanguage();
+        }
+    }
+
+    private String getLanguageAbbreviation(int language) {
+        String abbr;
+        switch (language) {
+            case 0:
+                abbr = "ru";
+                break;
+            case 1:
+                abbr = "us";
+                break;
+            case 2:
+                abbr = "uk";
+                break;
+            default:
+                abbr = "us";
+        }
+        return abbr;
+    }
+
+    public String getResStringLanguage(int id, String lang) {
+        //Get default locale to back it
+        Resources res = getResources();
+        Configuration conf = res.getConfiguration();
+        Locale savedLocale = conf.locale;
+        //Retrieve resources from desired locale
+        Configuration confAr = getResources().getConfiguration();
+        confAr.locale = new Locale(lang);
+        DisplayMetrics metrics = new DisplayMetrics();
+        Resources resources = new Resources(getAssets(), metrics, confAr);
+        //Get string which you want
+        String string = resources.getString(id);
+        //Restore default locale
+        conf.locale = savedLocale;
+        res.updateConfiguration(conf, null);
+        //return the string that you want
+        return string;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //при зміні мови перезавантажую адаптер
+        if (topicList != null) {
+            getLanguagePreferences();
+            loadRecyclerView();
+        }
+        //також міняю мову меню
+        if (itemExitAccount != null && itemStatistics != null && itemLanguage != null) {
+            itemExitAccount.setTitle(getResStringLanguage(R.string.item_exit_account, getLanguageAbbreviation(language)));
+            itemStatistics.setTitle(getResStringLanguage(R.string.item_statistics, getLanguageAbbreviation(language)));
+            itemLanguage.setTitle(getResStringLanguage(R.string.item_language, getLanguageAbbreviation(language)));
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +173,7 @@ public class ListTopicActivity extends AppCompatActivity {
         recyclerViewTopic = findViewById(R.id.recyclerViewTopic);
         recyclerViewTopic.setVisibility(View.GONE);
 
-        setLanguage();
+        getLanguagePreferences();
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -108,7 +191,7 @@ public class ListTopicActivity extends AppCompatActivity {
 
     private void loadRecyclerView() {
         RecyclerView recyclerViewTopic = findViewById(R.id.recyclerViewTopic);
-        topicAdapter = new TopicAdapter();
+        topicAdapter = new TopicAdapter(language);
         recyclerViewTopic.setLayoutManager(new LinearLayoutManager(this));
         if (topicList.size() > 1) {
             Collections.sort(topicList, (o1, o2) -> Integer.compare(o1.getId(), o2.getId()));
@@ -190,6 +273,7 @@ public class ListTopicActivity extends AppCompatActivity {
                         topic.setQuantityTasksInTopic(topic.getQuantityTasksInTopic() + 1);
                     }
                 }
+                getLanguagePreferences();
                 setStatisticsList(); //створюю нову або дістаю з БД SQLite дані статистики
                 loadRecyclerView(); //встановлюю елементи інтерфейсу
                 progressBarTopicActivity.setVisibility(View.GONE);

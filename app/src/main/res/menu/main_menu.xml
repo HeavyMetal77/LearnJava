@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="@string/item_statistics" android:id="@+id/itemStatistics" />
     <item android:title="@string/item_exit_account" android:id="@+id/itemExitAccount" />
+    <item android:title="@string/item_language" android:id="@+id/itemLanguage" />
+    <item android:title="@string/item_statistics" android:id="@+id/itemStatistics" />
 </menu>

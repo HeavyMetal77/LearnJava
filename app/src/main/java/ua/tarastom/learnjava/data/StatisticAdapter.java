@@ -1,6 +1,9 @@
 package ua.tarastom.learnjava.data;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.text.Html;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +26,9 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
     private MainViewModel mainViewModel;
     private int language;
 
-    public StatisticAdapter(MainViewModel mainViewModel) {
+    public StatisticAdapter(MainViewModel mainViewModel, int language) {
         this.mainViewModel = mainViewModel;
-        setLanguage();
+        this.language = language;
     }
 
     public List<Statistic> getStatisticResult() {
@@ -41,24 +44,6 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
             }
         }
         notifyDataSetChanged();
-    }
-
-    private void setLanguage() {
-        //локалізація питань
-        String displayLanguage = Locale.getDefault().getDisplayLanguage();
-        switch (displayLanguage) {
-            case "русский":
-                language = 0;
-                break;
-            case "English":
-                language = 1;
-                break;
-            case "українська":
-                language = 2;
-                break;
-            default:
-                language = 1;
-        }
     }
 
     @NonNull
@@ -103,6 +88,9 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
             mainViewModel.insertStatistic(statisticByNameTopic);
             setStatisticResult(mainViewModel.getAllStatistics());
         });
+        //напис на кнопці виходячи з вибору мови
+        holder.buttonClearTopic.setText(getResStringLanguage(holder, R.string.button_clear, getLanguageAbbreviation(language)));
+
         //змінюю колір фону item при завершенні опрацювання всіх завдань
         if (statisticByNameTopic.getQuantityTasksInTopic() == statisticByNameTopic.getQuantitySolvedTasks()) {
             holder.itemView.setBackgroundResource(R.drawable.style_item_topic_finished);
@@ -133,5 +121,42 @@ public class StatisticAdapter extends RecyclerView.Adapter<StatisticAdapter.Stat
             itemView.setOnClickListener(view -> {
             });
         }
+    }
+
+    private static String getLanguageAbbreviation(int language) {
+        String abbr;
+        switch (language) {
+            case 0:
+                abbr = "ru";
+                break;
+            case 1:
+                abbr = "us";
+                break;
+            case 2:
+                abbr = "uk";
+                break;
+            default:
+                abbr = "us";
+        }
+        return abbr;
+    }
+
+    public static  String getResStringLanguage(StatisticViewHolder holder, int id, String lang){
+        //Get default locale to back it
+        Resources res = holder.itemView.getResources();
+        Configuration conf = res.getConfiguration();
+        Locale savedLocale = conf.locale;
+        //Retrieve resources from desired locale
+        Configuration confAr = holder.itemView.getResources().getConfiguration();
+        confAr.locale = new Locale(lang);
+        DisplayMetrics metrics = new DisplayMetrics();
+        Resources resources = new Resources(holder.itemView.getResources().getAssets(), metrics, confAr);
+        //Get string which you want
+        String string = resources.getString(id);
+        //Restore default locale
+        conf.locale = savedLocale;
+        res.updateConfiguration(conf, null);
+        //return the string that you want
+        return string;
     }
 }
