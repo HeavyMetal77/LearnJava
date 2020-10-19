@@ -43,5 +43,6 @@
     <string name="radio_button_label_english">English</string>
     <string name="radio_button_label_russian">русский</string>
     <string name="radio_button_label_ukraine">українська</string>
+    <string name="button_label_comment">Comment</string>
 
 </resources>

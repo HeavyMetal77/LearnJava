@@ -12,8 +12,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import ua.tarastom.learnjava.data.Task;
 import ua.tarastom.learnjava.data.Topic;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        uploadDataToFirestore(); //тест завантаження даних в Cloud Firestore
-//        uploadListQuantityTasksToFirestore(); //тест завантаження даних в Cloud Firestore
+//        uploadDataToFirestore(); //тест завантаження даних в Cloud Firestore - tasks
+//        uploadListQuantityTasksToFirestore(); //тест завантаження даних в Cloud Firestore - topics
     }
 
     public void onClickGoTrainingMode(View view) {
@@ -48,87 +50,61 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadDataToFirestore() {
+        for (int i = 0; i < 10; i++) {
+            List<String> topic = new ArrayList<>();
+            topic.add("Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль.");
+            topic.add("Java syntax. Data types, variables, number systems, data output to the console.");
+            topic.add("Синтаксис Java. Типи даних, змінні, системи числення, вивід даних в консоль.");
+            List<String> question = new ArrayList<>();
+            question.add("Какие из следующих идентификаторов являются действительными идентификаторами Java? (Выберите все, что подходит)");
+            question.add("Which of the following are valid Java identifiers? (Choose all that apply)");
+            question.add("Які з наступних ідентифікаторів є дійсними ідентифікаторами Java? (Виберіть всі, що підходять)");
 
-//        for (int i = 0; i < 10; i++) {
-//            List<String> topic = new ArrayList<>();
-//            topic.add("Синтаксис Java. Типы данных, переменные, системы счисления, вывод данных в консоль.");
-//            topic.add("Java syntax. Data types, variables, number systems, data output to the console.");
-//            topic.add("Синтаксис Java. Типи даних, змінні, системи числення, вивід даних в консоль.");
-//            List<String> question = new ArrayList<>();
-//            question.add("Какие из следующих идентификаторов являются действительными идентификаторами Java? \n(Выберите все правильные ответы)");
-//            question.add("Which of the following are valid Java identifiers? \n(Choose all that apply)");
-//            question.add("Які з вказаних ідентифікаторів являються дійсними ідентифікаторами Java? \n(Виберіть всі правильні відповіді)");
-//
-//            Map<String, Boolean> answer = new LinkedHashMap<>();
-//            answer.put("1", false);
-//            answer.put("2", true);
-//            answer.put("3", false);
-//            answer.put("4", true);
-//            answer.put("5", false);
-//
-//            db.collection("taskList").add(
-//                    new Task(i, 0, topic, question,
-//                    "       1. byte b11 = 125;\n" +
-//                            "       2. byte b21 = -228;\n" +
-//                            "       3. byte b31 = 0b0101;\n" +
-//                            "       4. byte b4 = 0b101;\n" +
-//                            "       5. byte b5 = 225", answer, false)).addOnSuccessListener(documentReference -> Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show());
-//        }
+            String taskStr =
+                    "A.  A$B\n" +
+                            "B. _helloWorld\n" +
+                            "C.  true\n" +
+                            "D.  java.lang\n" +
+                            "E.  Public\n" +
+                            "F.  1980_s\n";
 
+            Map<String, Boolean> answerMap = new LinkedHashMap<>();
+            answerMap.put("A", true);
+            answerMap.put("B", true);
+            answerMap.put("C", false);
+            answerMap.put("D", false);
+            answerMap.put("E", true);
+            answerMap.put("F", false);
+            List<Map<String, Boolean>> answer = new ArrayList<>();
+            answer.add(answerMap);
+            answer.add(answerMap);
+            answer.add(answerMap);
 
-//        for (int i = 0; i < 10; i++) {
-//            List<String> topic = new ArrayList<>();
-//            topic.add("Арифметические и логические операции, операции сравнения и присваивания.");
-//            topic.add("Arithmetic and logical operations, comparison and assignment operations.");
-//            topic.add("Арифметичні та логічні операції, операції порівняння та присвоювання.");
-//            List<String> question = new ArrayList<>();
-//            question.add("Какие ? \n(Выберите все правильные ответы)");
-//            question.add("Which ? \n(Choose all that apply)");
-//            question.add("Які ? \n(Виберіть всі правильні відповіді)");
-//
-//            Map<String, Boolean> answer = new LinkedHashMap<>();
-//            answer.put("1", false);
-//            answer.put("2", true);
-//            answer.put("3", false);
-//            answer.put("4", true);
-//            answer.put("5", false);
-//
-//            db.collection("taskList").add(
-//                    new Task(i, 1, topic, question,
-//                            "       1. byte b11 = 125;\n" +
-//                                    "       2. byte b21 = -228;\n" +
-//                                    "       3. byte b31 = 0b0101;\n" +
-//                                    "       4. byte b4 = 0b101;\n" +
-//                                    "       5. byte b5 = 225", answer, false)).addOnSuccessListener(documentReference -> Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show());
-//        }
+            List<String> hint = new ArrayList<>();
+            hint.add("A, B, E. Вариант A действителен, потому что вы можете использовать знак доллара в идентификаторах. Вариант Б " +
+                    "действителен, поскольку в идентификаторах можно использовать подчеркивание. Вариант C не является допустимым идентификатором, " +
+                    "потому что true - это зарезервированное слово Java. Вариант D недействителен, потому что точка (.) не " +
+                    "разрешена в идентификаторах. Вариант E действителен, потому что Java чувствителен к регистру, поэтому Public не является " +
+                    "зарезервированным словом и, следовательно, действительным идентификатором. Вариант F недействителен, потому что первый " +
+                    "символ не является буквой, $ или знаком нижнего подчеркивания (_).");
+            hint.add("A, B, E. Option A is valid because you can use the dollar sign in identifiers. Option B is " +
+                    "valid because you can use an underscore in identifiers. Option C is not a valid identifier " +
+                    "because true is a Java reserved word. Option D is not valid because the dot (.) is not " +
+                    "allowed in identifiers. Option E is valid because Java is case sensitive, so Public is not " +
+                    "a reserved word and therefore a valid identifier. Option F is not valid because the first " +
+                    "character is not a letter, $, or _.");
+            hint.add("A, B, E. Варіант A дійсний, оскільки ви можете використовувати знак долара в ідентифікаторах. Варіант B є " +
+                    "дійсний, оскільки ви можете використовувати підкреслення в ідентифікаторах. Варіант C не є дійсним ідентифікатором " +
+                    "тому, що true - це зарезервоване слово Java. Варіант D недійсний, оскільки крапка (.) не " +
+                    "допускається в ідентифікаторах. Варіант E є дійсним, оскільки Java чутливий до регістру, тому Public - не " +
+                    "зарезервоване слово і, отже, дійсний ідентифікатор. Варіант F не дійсний, оскільки перший " +
+                    "символ - це не буква, $ або знак нижного підкреслення (_).");
 
-//        for (int i = 0; i < 10; i++) {
-//            List<String> topic = new ArrayList<>();
-//            topic.add("Классы и объекты, ссылочные типы данных.");
-//            topic.add("Classes and objects, reference data types.");
-//            topic.add("Класи і об'єкти, посилальні типи даних.");
-//            List<String> question = new ArrayList<>();
-//            question.add("Какие ? \n(Выберите все правильные ответы)");
-//            question.add("Which ? \n(Choose all that apply)");
-//            question.add("Які ? \n(Виберіть всі правильні відповіді)");
-//
-//            Map<String, Boolean> answer = new LinkedHashMap<>();
-//            answer.put("1", false);
-//            answer.put("2", true);
-//            answer.put("3", false);
-//            answer.put("4", true);
-//            answer.put("5", false);
-//
-//            db.collection("taskList").add(
-//                    new Task(i, 3, topic, question,
-//                            "       1. byte b11 = 125;\n" +
-//                                    "       2. byte b21 = -228;\n" +
-//                                    "       3. byte b31 = 0b0101;\n" +
-//                                    "       4. byte b4 = 0b101;\n" +
-//                                    "       5. byte b5 = 225", answer, false)).addOnSuccessListener(documentReference -> Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show());
-//        }
-
-
+            db.collection("taskList").add(
+                    new Task(i, 1, topic, question, taskStr, answer, false, hint))
+                    .addOnSuccessListener(documentReference -> Toast.makeText(MainActivity.this, "Success!" , Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show());
+        }
     }
 
     public void uploadListQuantityTasksToFirestore() {

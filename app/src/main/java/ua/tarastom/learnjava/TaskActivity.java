@@ -59,9 +59,12 @@ public class TaskActivity extends AppCompatActivity {
     private ProgressBar progressBarTaskActivity;
     public static final String APP_PREFERENCES = "LearnJavaSettings";
     public static final String APP_PREFERENCES_LANGUAGE = "language";
-    MenuItem itemExitAccount;
-    MenuItem itemStatistics;
-    MenuItem itemLanguage;
+    private MenuItem itemExitAccount;
+    private MenuItem itemStatistics;
+    private MenuItem itemLanguage;
+    private Task task;
+    private TextView textViewHintAnswer;
+    private Button buttonShowHintAnswer;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -191,6 +194,8 @@ public class TaskActivity extends AppCompatActivity {
         scrollViewTaskActivity = findViewById(R.id.scrollViewTaskActivity);
         constraintLayout = findViewById(R.id.layoutActivityTask);
         progressBarTaskActivity = findViewById(R.id.progressBarTaskActivity);
+        textViewHintAnswer = findViewById(R.id.textViewHintAnswer);
+        buttonShowHintAnswer = findViewById(R.id.buttonShowHintAnswer);
     }
 
     @Override
@@ -257,6 +262,9 @@ public class TaskActivity extends AppCompatActivity {
     //генерація наступного завдання
 
     private void generateNextTask(int idTask) {
+        buttonShowHintAnswer.setVisibility(View.GONE);
+        textViewHintAnswer.setVisibility(View.GONE);
+
         //загальний фон встановлюю на білий
         scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorWhite));
         //якщо завдань в темі більше не має встановлюю idTask на останнє
@@ -296,7 +304,7 @@ public class TaskActivity extends AppCompatActivity {
         for (CheckBox checkBox : checkBoxList) {
             checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
         }
-        Task task = taskList.get(idTask);
+        task = taskList.get(idTask);
 
         List<Integer> listOfIncorrectlySolvedProblems = currentStatisticTask.getListOfIncorrectlySolvedProblems();
         if (listOfIncorrectlySolvedProblems != null
@@ -327,9 +335,10 @@ public class TaskActivity extends AppCompatActivity {
         if (taskList != null && taskList.size() > 0) {
             textViewQuestion.setText(task.getQuestion().get(language));
             textViewTextMultiLine.setText(task.getTaskStr());
-            int answerListSize = task.getAnswermap().size();
+            Map<String, Boolean> map = task.getAnswermap().get(language);
+            int answerListSize = map.size();
             int countCheckbox = 0;
-            for (String key : task.getAnswermap().keySet()) {
+            for (String key : map.keySet()) {
                 CheckBox checkBox = checkBoxList.get(countCheckbox++);
                 checkBox.setText(key);
                 checkBox.setChecked(false);
@@ -341,12 +350,14 @@ public class TaskActivity extends AppCompatActivity {
             for (int i = checkBoxList.size() - 1; i >= checkBoxList.size() - unusedCheckBoxes; i--) {
                 checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
             }
-            //для activity_task.xml встановлюю програмно значення buttonCheckAnswer
+            //для activity_task.xml встановлюю програмно значення buttonCheckAnswer та buttonShowHintAnswer
             // -  app:layout_constraintTop_toBottomOf="@id/checkBoxXXXX"
             //під останнім checkBox
             CheckBox lastCheckBox = checkBoxList.get(answerListSize - 1);
             ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) buttonCheckAnswer.getLayoutParams();
             layoutParams.topToBottom = lastCheckBox.getId();
+            ConstraintLayout.LayoutParams layoutParamsHint = (ConstraintLayout.LayoutParams) buttonShowHintAnswer.getLayoutParams();
+            layoutParamsHint.topToBottom = lastCheckBox.getId();
 
             //якщо завдання вже вирішувалось - показую правильні відповіді
             if (task.isResolved() || currentStatisticTask.getQuantitySolvedTasks() > idTask) {
@@ -397,7 +408,8 @@ public class TaskActivity extends AppCompatActivity {
             Task task = taskList.get(idTask);
 
             //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
-            Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
+            Map<String, Boolean> map = task.getAnswermap().get(language);
+            Set<Map.Entry<String, Boolean>> entries = map.entrySet();
             boolean choiceRightAnswer = true; // флаг правильної відповіді
             for (int j = 0; j < entries.size(); j++) {
                 String textCheckBox = checkBoxList.get(j).getText().toString().trim();
@@ -460,7 +472,7 @@ public class TaskActivity extends AppCompatActivity {
         if (taskList.size() > 0) {
             Task task = taskList.get(taskId);
             //звіряю кожне значення чекбокса з значенням мапи відповідей завдання
-            Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().entrySet();
+            Set<Map.Entry<String, Boolean>> entries = task.getAnswermap().get(language).entrySet();
             for (int j = 0; j < entries.size(); j++) {
                 String textCheckBox = checkBoxList.get(j).getText().toString();
                 for (Map.Entry<String, Boolean> entry : entries) {
@@ -498,6 +510,7 @@ public class TaskActivity extends AppCompatActivity {
     //метод онклік для перевірки правильності відповіді
     public void showRightAnswer(View view) {
         showRightAnswer();
+        buttonShowHintAnswer.setVisibility(View.VISIBLE);
     }
 
     //метод онклік для зміни фону вибраного чекбокса
@@ -515,6 +528,12 @@ public class TaskActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ListTopicActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    public void showHintAnswer(View view) {
+        textViewHintAnswer.setText(task.getHint().get(language)); //встановлюю текст підказки
+        textViewHintAnswer.setVisibility(View.VISIBLE);
+        buttonShowHintAnswer.setVisibility(View.GONE); //після нажаття кнопки - роблю її невидимою
     }
 
 //    @Override

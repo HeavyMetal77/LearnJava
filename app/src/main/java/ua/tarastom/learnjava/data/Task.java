@@ -1,5 +1,6 @@
 package ua.tarastom.learnjava.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,13 +10,16 @@ public class Task {
     private List<String> topic; //тема
     private List<String> question; //запитання
     private String taskStr; //суть завдання
-    private Map<String, Boolean> answermap; //всі відповіді / правильні відповіді
+    private List<Map<String, Boolean>> answermap; //всі відповіді / правильні відповіді - список для кожної мови
     private boolean isResolved; //чи вирішена задача
+    private List<String> hint; //пояснення до відповіді
 
     public Task() {
+        hint = new ArrayList<>();
     }
 
-    public Task(int idTask, int idTopic, List<String> topic, List<String> question, String taskStr, Map<String, Boolean> answermap, boolean isResolved) {
+    public Task(int idTask, int idTopic, List<String> topic, List<String> question, String taskStr,
+                List<Map<String, Boolean>> answermap, boolean isResolved, List<String> hint) {
         this.idTask = idTask;
         this.idTopic = idTopic;
         this.topic = topic;
@@ -23,6 +27,7 @@ public class Task {
         this.taskStr = taskStr;
         this.answermap = answermap;
         this.isResolved = isResolved;
+        this.hint = hint;
     }
 
     public int getIdTask() {
@@ -65,11 +70,11 @@ public class Task {
         this.taskStr = taskStr;
     }
 
-    public void setAnswermap(Map<String, Boolean> answermap) {
+    public void setAnswermap(List<Map<String, Boolean>> answermap) {
         this.answermap = answermap;
     }
 
-    public Map<String, Boolean> getAnswermap() {
+    public List<Map<String, Boolean>> getAnswermap() {
         return answermap;
     }
 
@@ -79,5 +84,13 @@ public class Task {
 
     public void setResolved(boolean resolved) {
         isResolved = resolved;
+    }
+
+    public List<String> getHint() {
+        return hint;
+    }
+
+    public void setHint(List<String> hint) {
+        this.hint = hint;
     }
 }

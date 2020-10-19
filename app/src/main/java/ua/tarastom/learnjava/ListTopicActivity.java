@@ -47,9 +47,9 @@ public class ListTopicActivity extends AppCompatActivity {
     private RecyclerView recyclerViewTopic;
     public static final String APP_PREFERENCES = "LearnJavaSettings";
     public static final String APP_PREFERENCES_LANGUAGE = "language";
-    MenuItem itemExitAccount;
-    MenuItem itemStatistics;
-    MenuItem itemLanguage;
+    private MenuItem itemExitAccount;
+    private MenuItem itemStatistics;
+    private MenuItem itemLanguage;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
