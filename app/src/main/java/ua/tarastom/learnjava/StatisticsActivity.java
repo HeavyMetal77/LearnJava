@@ -108,7 +108,7 @@ public class StatisticsActivity extends AppCompatActivity {
         List<Statistic> allStatistics = mainViewModel.getAllStatistics();
         statisticAdapter.setStatisticResult(allStatistics);
         TextView textViewLabelStat = findViewById(R.id.textViewLabelStat);
-        textViewLabelStat.setText(getResStringLanguage(R.string.select_application_language, getLanguageAbbreviation(language)));
+        textViewLabelStat.setText(getResStringLanguage(R.string.label_stat, getLanguageAbbreviation(language)));
     }
 
     @Override

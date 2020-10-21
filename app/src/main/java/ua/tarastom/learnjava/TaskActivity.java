@@ -28,10 +28,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import ua.tarastom.learnjava.data.MainViewModel;
 import ua.tarastom.learnjava.data.Statistic;
@@ -47,7 +49,7 @@ public class TaskActivity extends AppCompatActivity {
     private List<CheckBox> checkBoxList;
     private ImageView imageViewArrowBack;
     private ImageView imageViewArrowForward;
-    private int taskId = 0; //номер завдання
+    private int taskId; //номер завдання
     private Button buttonShowRightAnswer;
     private Button buttonCheckAnswer;
     private MainViewModel mainViewModel;
@@ -64,6 +66,7 @@ public class TaskActivity extends AppCompatActivity {
     private MenuItem itemLanguage;
     private Task task;
     private TextView textViewHintAnswer;
+    private TextView textViewAnswerOptionLabel;
     private Button buttonShowHintAnswer;
 
     @Override
@@ -163,9 +166,7 @@ public class TaskActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        if (mainViewModel == null) {
-            mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
-        }
+        mainViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
         imageViewArrowBack = findViewById(R.id.imageViewArrowBack);
         imageViewArrowForward = findViewById(R.id.imageViewArrowForward);
         imageViewArrowBack.setVisibility(View.INVISIBLE);
@@ -174,6 +175,7 @@ public class TaskActivity extends AppCompatActivity {
         textLabelResultTask = findViewById(R.id.textLabelResultTask);
         textViewQuestion = findViewById(R.id.textViewLabelQuestion);
         textViewTextMultiLine = findViewById(R.id.textViewTextMultiLine);
+        textViewAnswerOptionLabel = findViewById(R.id.textViewAnswerOptionLabel);
         CheckBox checkBox1 = findViewById(R.id.checkBox1);
         CheckBox checkBox2 = findViewById(R.id.checkBox2);
         CheckBox checkBox3 = findViewById(R.id.checkBox3);
@@ -203,6 +205,8 @@ public class TaskActivity extends AppCompatActivity {
         super.onResume();
         buttonCheckAnswer.setText(getResStringLanguage(R.string.submit, getLanguageAbbreviation(language)));
         buttonShowRightAnswer.setText(getResStringLanguage(R.string.right_answer, getLanguageAbbreviation(language)));
+        buttonShowHintAnswer.setText(getResStringLanguage(R.string.button_label_comment, getLanguageAbbreviation(language)));
+        textViewAnswerOptionLabel.setText(getResStringLanguage(R.string.answer_options, getLanguageAbbreviation(language)));
         if (itemExitAccount != null && itemStatistics != null && itemLanguage != null) {
             itemExitAccount.setTitle(getResStringLanguage(R.string.item_exit_account, getLanguageAbbreviation(language)));
             itemStatistics.setTitle(getResStringLanguage(R.string.item_statistics, getLanguageAbbreviation(language)));
@@ -217,10 +221,11 @@ public class TaskActivity extends AppCompatActivity {
 
         getLanguagePreferences();
 
-
         initView();
         buttonCheckAnswer.setText(getResStringLanguage(R.string.submit, getLanguageAbbreviation(language)));
         buttonShowRightAnswer.setText(getResStringLanguage(R.string.right_answer, getLanguageAbbreviation(language)));
+        buttonShowHintAnswer.setText(getResStringLanguage(R.string.button_label_comment, getLanguageAbbreviation(language)));
+        textViewAnswerOptionLabel.setText(getResStringLanguage(R.string.answer_options, getLanguageAbbreviation(language)));
         constraintLayout.setVisibility(View.GONE);
         progressBarTaskActivity.setVisibility(View.VISIBLE);
 
@@ -235,6 +240,11 @@ public class TaskActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     taskList = queryDocumentSnapshots.toObjects(Task.class);
+
+                    //сортую список завдань по номеру завдання IdTask
+                    //щоб завдання виводились завжди в одному і тому порядку - по номеру IdTask
+                    Collections.sort(taskList, (task1, task2) -> Integer.compare(task1.getIdTask(), task2.getIdTask()));
+
                     //отримуємо номер останнього вирішеного завдання з SQLite Statistic
                     List<Statistic> allStatistics = mainViewModel.getAllStatistics();
                     for (Statistic statistic : allStatistics) {
@@ -259,11 +269,12 @@ public class TaskActivity extends AppCompatActivity {
                     progressBarTaskActivity.setVisibility(View.GONE);
                 }).addOnFailureListener(e -> startActivity(new Intent(getApplicationContext(), ListTopicActivity.class)));
     }
-    //генерація наступного завдання
 
+    //генерація наступного завдання
     private void generateNextTask(int idTask) {
         buttonShowHintAnswer.setVisibility(View.GONE);
         textViewHintAnswer.setVisibility(View.GONE);
+        textViewTextMultiLine.setVisibility(View.VISIBLE);
 
         //загальний фон встановлюю на білий
         scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorWhite));
@@ -271,6 +282,18 @@ public class TaskActivity extends AppCompatActivity {
         if (idTask >= taskList.size()) {
             idTask = taskList.size() - 1;
         }
+        task = taskList.get(idTask);
+
+        //встановлюю налаштування layoutParams за замовчуванням
+        ConstraintLayout.LayoutParams layoutParamsAnswerOptionLabel = (ConstraintLayout.LayoutParams) textViewAnswerOptionLabel.getLayoutParams();
+        if (task.getTaskStr().equals("")) {
+            //якщо тексту завдання не має - підказку прикріплюю до запитання
+            layoutParamsAnswerOptionLabel.topToBottom = textViewQuestion.getId();
+        } else {
+            //якщо текст є - підказку прикріплюю до тексту
+            layoutParamsAnswerOptionLabel.topToBottom = textViewTextMultiLine.getId();
+        }
+
 
         //стрілка назад невидима, якщо перше завдання
         if (idTask < 1) {
@@ -293,6 +316,7 @@ public class TaskActivity extends AppCompatActivity {
             for (CheckBox checkBox : checkBoxList) {
                 checkBox.setClickable(false);
             }
+            setShowHint(); //встановлюю текст підказки
         } else {
             buttonCheckAnswer.setClickable(true);
             for (CheckBox checkBox : checkBoxList) {
@@ -304,7 +328,6 @@ public class TaskActivity extends AppCompatActivity {
         for (CheckBox checkBox : checkBoxList) {
             checkBox.setVisibility(View.VISIBLE); //всі чекбокси роблю видимими
         }
-        task = taskList.get(idTask);
 
         List<Integer> listOfIncorrectlySolvedProblems = currentStatisticTask.getListOfIncorrectlySolvedProblems();
         if (listOfIncorrectlySolvedProblems != null
@@ -331,12 +354,19 @@ public class TaskActivity extends AppCompatActivity {
                 + currentStatisticTask.getNumberOfCorrectlySolvedTasks() + " / "
                 + currentStatisticTask.getQuantityTasksInTopic();
         textLabelResultTask.setText(labelLabelResultTask);
+        textViewAnswerOptionLabel.setText(getResStringLanguage(R.string.answer_options, getLanguageAbbreviation(language)));
+
 
         if (taskList != null && taskList.size() > 0) {
             textViewQuestion.setText(task.getQuestion().get(language));
-            textViewTextMultiLine.setText(task.getTaskStr());
-            Map<String, Boolean> map = task.getAnswermap().get(language);
-            int answerListSize = map.size();
+            //якщо текст завдання відсутній (знаходиться у відповідях) - не вивожу його
+            if (!task.getTaskStr().equals("")) {
+                textViewTextMultiLine.setText(task.getTaskStr());
+            } else {
+                textViewTextMultiLine.setVisibility(View.GONE);
+            }
+            Map<String, Boolean> mapUnsorted = task.getAnswermap().get(language);
+            TreeMap<String, Boolean> map = new TreeMap<>(mapUnsorted); //сортую значення по ключу
             int countCheckbox = 0;
             for (String key : map.keySet()) {
                 CheckBox checkBox = checkBoxList.get(countCheckbox++);
@@ -346,6 +376,7 @@ public class TaskActivity extends AppCompatActivity {
             }
 
             //встановлюю кількість видимих чекбоксів, в залежності від кількості відповідей
+            int answerListSize = map.size();
             int unusedCheckBoxes = checkBoxList.size() - answerListSize;
             for (int i = checkBoxList.size() - 1; i >= checkBoxList.size() - unusedCheckBoxes; i--) {
                 checkBoxList.get(i).setVisibility(View.INVISIBLE); //лишні чекбокси роблю невидимими
@@ -377,7 +408,7 @@ public class TaskActivity extends AppCompatActivity {
         //заборонено перехід до наступного завдання поки не виконано поточне
         boolean resolved = taskList.get(taskId).isResolved();
         if (!resolved) {
-            Toast.makeText(this, R.string.toast_solve_this_problem_first, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResStringLanguage(R.string.toast_solve_this_problem_first, getLanguageAbbreviation(language)), Toast.LENGTH_SHORT).show();
             return;
         }
         //переходимо до наступного завдання
@@ -441,6 +472,10 @@ public class TaskActivity extends AppCompatActivity {
                 for (CheckBox checkBox : checkBoxList) {
                     checkBox.setClickable(false);
                 }
+
+                //якщо відповідь правильна - кнопку підказки не показую
+                //а зразу показую підказку
+                setShowHint();
 
                 //загальний фон змінюється на світло-зелений
                 scrollViewTaskActivity.setBackground(ContextCompat.getDrawable(this, R.color.colorBackgroundCorrectly));
@@ -530,10 +565,26 @@ public class TaskActivity extends AppCompatActivity {
         finish();
     }
 
-    public void showHintAnswer(View view) {
+    public void onClickShowHintAnswer(View view) {
+        setShowHint();
+    }
+
+    private void setShowHint() {
         textViewHintAnswer.setText(task.getHint().get(language)); //встановлюю текст підказки
         textViewHintAnswer.setVisibility(View.VISIBLE);
         buttonShowHintAnswer.setVisibility(View.GONE); //після нажаття кнопки - роблю її невидимою
+
+        ConstraintLayout.LayoutParams layoutParamsHint = (ConstraintLayout.LayoutParams) textViewHintAnswer.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParamsAnswerOptionLabel = (ConstraintLayout.LayoutParams) textViewAnswerOptionLabel.getLayoutParams();
+        if (task.getTaskStr().equals("")) {
+            //якщо тексту завдання не має - підказку прикріплюю до запитання
+            layoutParamsHint.topToBottom = textViewQuestion.getId();
+        } else {
+            //якщо текст є - підказку прикріплюю до тексту
+            layoutParamsHint.topToBottom = textViewTextMultiLine.getId();
+        }
+        //напис варіанти відповідей прикріплюю до підказки
+        layoutParamsAnswerOptionLabel.topToBottom = textViewHintAnswer.getId();
     }
 
 //    @Override

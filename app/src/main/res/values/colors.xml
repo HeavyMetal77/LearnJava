@@ -5,7 +5,7 @@
     <color name="colorAccent">#c0d6a7</color>
     <color name="colorAccentTopic">#DDEBCE</color>
     <color name="colorBackground">#C7E3FF</color>
-    <color name="colorBackground2">#CCCCCC</color>
+    <color name="colorBackgroundHint">#CCCCCC</color>
     <color name="colorBackground3">#f0f0f0</color>
     <color name="colorLabelText">#000000</color>
     <color name="colorTextTask">#663300</color>
